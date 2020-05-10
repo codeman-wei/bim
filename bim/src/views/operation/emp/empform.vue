@@ -93,7 +93,7 @@ export default {
       doAdd() {
         addEmp(this.form).then(res => {
           this.dialog = false
-          this.resetForm()
+          this.resetForm('form')
           this.$notify({
             title: '添加成功',
             type: 'success',
@@ -108,7 +108,7 @@ export default {
       },
       doEdit() {
         editEmp(this.form).then(res => {
-          this.resetForm()
+          this.resetForm('form')
           this.$notify({
             title: '修改成功',
             type: 'success',
