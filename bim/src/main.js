@@ -8,6 +8,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
 import echarts from 'echarts'
 import store from './store'
+
+// global css
+import './assets/styles/index.scss'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI);

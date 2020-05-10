@@ -10,3 +10,12 @@ export function getSubprojectById(id){
       }
     })
 }
+
+
+
+export function getProjectList(id){
+  return request({
+    url: '/project/list',
+    method:'get'
+  })
+}

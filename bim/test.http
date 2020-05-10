@@ -1,0 +1,33 @@
+GET  http://localhost:5000/secmanager?page=1&size=10
+
+###
+
+GET  http://localhost:5000/project/list
+
+###
+
+POST http://localhost:5000/secmanager/add
+content-type: application/json
+
+{
+  "project_id": 3,
+  "device_name": "利洋9（锚艇）",
+  "specification": "",
+  "number": 1
+}
+
+###
+DELETE  http://localhost:5000/secmanager/delete/6
+
+###
+
+PUT  http://localhost:5000/secmanager/edit
+content-type: application/json
+
+{
+  "id": 6,
+  "project_id": 3,
+  "device_name": "利洋9（锚艇）",
+  "specification": "",
+  "number": 1
+}
