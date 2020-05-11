@@ -18,7 +18,7 @@ app.config['DEFAULT_PASSWORD'] = '123456'
 app.config['Expiration'] = 600
 # 指定数据库的链接信息
 # mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:wei123@localhost/bim_db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost/bim_db"
 # 这个配置将来会被禁用,设置为True或者False可以解除警告信息,建议设置False
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # app.config['SQLALCHEMY_RECORD_QUERIES'] = True
@@ -29,9 +29,10 @@ db = SQLAlchemy(app)
 
 # 注册蓝图
 
-from flask_web.Module import LoginModule, UserModule, EmployeeModule, ProjectModule
+from flask_web.Module import LoginModule, UserModule, EmployeeModule, ProjectModule,SecmanagerModule
 
 app.register_blueprint(LoginModule.loginModule)
 app.register_blueprint(UserModule.userModule, url_prefix="/user")
 app.register_blueprint(EmployeeModule.employeeModule, url_prefix="/employee")
 app.register_blueprint(ProjectModule.projectModule, url_prefix="/project")
+app.register_blueprint(SecmanagerModule.secmanagerModule, url_prefix="/secmanager")

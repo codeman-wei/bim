@@ -29,3 +29,12 @@ def getSubprojectById():
     for sp in subp:
         return_data.append(sp.to_json())
     return jsonify({'code':'200','data':return_data,'error':''})
+
+@projectModule.route('/list',methods = ['GET'])
+# @auth.login_required
+def getProjectList():
+    items = Project.query.all()
+    data = []
+    for item in items:
+        data.append(item.to_json())
+    return jsonify({'code':'200','data':data,'error':''})

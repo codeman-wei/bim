@@ -2,14 +2,13 @@ from flask_web.Databases.User import User
 from flask import Blueprint,render_template,request,jsonify,g
 from flask_web import auth
 import json
-from flask_web import db
+from flask_web import db, app
 import time
 import datetime
 userModule = Blueprint('userModule',__name__)
 
-
 @userModule.route('/', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def getAllUsers():
     page = int(request.args.get("page"))
     size = int(request.args.get("size"))
