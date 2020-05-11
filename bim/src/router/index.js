@@ -11,6 +11,7 @@ import sysmonitor from '@/views/operation/sysmonitor/systemmonitor'
 import notFound from '@/views/404'
 import schedulemanager from '@/views/schedule/manager'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
+import Test from '@/views/test'
 
 Vue.use(Router)
 
@@ -57,6 +58,11 @@ export default new Router({
             name: '6',
             component: userinfo,
         },
+        {
+          path: '/test',
+          name: 'test',
+          component: Test
+        }
       ],
     },
 

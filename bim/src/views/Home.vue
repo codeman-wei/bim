@@ -74,6 +74,10 @@
                     <i class="el-icon-user-solid"></i>
                     <span slot="title">用户中心</span>
                 </el-menu-item>
+                <el-menu-item index="test">
+                    <i class="el-icon-edit-outline" />
+                    <span slot="title">测试</span>
+                </el-menu-item>
             </el-menu>
             </el-col>
             <el-col :span="20">

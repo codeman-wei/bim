@@ -21,13 +21,11 @@
             </div>
         </div> -->
 
-
-
         <el-row class="tab-actions" v-for="(tabs, index) in tablists" :key= index>
             <el-col :lg="8" class="tab-action-item" v-for="(tab,index) in tabs" :key= index>
                 <!-- <el-card :body-style="{ padding: '0px' }"> -->
                 <div class="block">
-                    <img :src= "'./static/image/平潭大桥渲染图/' + tab.item_img_href" class="image" @click="show(tab)">
+                    <img :src= "imageApi + '/bridge_img/' + tab.item_img_href" class="image" @click="show(tab)">
                     <div style="padding: 14px;">
                         <span>{{tab.item_name}}</span>
                         <!-- <div class="bottom clearfix">
@@ -43,11 +41,18 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import ManagerCard from '@/views/schedule/managercard'
 import { showAllProject } from '@/api/schedule/schedule'
 export default {
     components: {
         "ManagerCard": ManagerCard,
+    },
+    computed: {
+    ...mapGetters([
+        'baseApi',
+        'imageApi'
+      ])
     },
     created() {
         this.initdata()

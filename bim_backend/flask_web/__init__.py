@@ -3,6 +3,9 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from redis import StrictRedis
+import os
+
+
 redis = StrictRedis(host='localhost', port=6379, db=0)
 auth = HTTPBasicAuth()
 
@@ -10,9 +13,12 @@ auth = HTTPBasicAuth()
 
 app = Flask(__name__)
 
+# STATIC_PATH = r"D:\code\temp\static"
+# app = Flask(__name__,static_folder=STATIC_PATH)
+
 CORS(app, supports_credentials=True)
 
-
+app.config['BASE_DIR'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')
 app.config['SECRET_KEY'] = '123456'
 app.config['DEFAULT_PASSWORD'] = '123456'
 app.config['Expiration'] = 600
