@@ -48,7 +48,7 @@
         </div>
     </div>
     <!--表单渲染-->
-    <el-dialog append-to-body :close-on-click-modal="false" :before-close="cancelCU" :visible.sync="diagVisable" :title="cuStatus === 0 ? '添加':'编辑'" width="580px" @open="getProjectData">
+    <el-dialog append-to-body :close-on-click-modal="false" :before-close="cancelCU" :visible.sync="diagVisable" :title="cuStatus === 0 ? '添加':'编辑'" width="620px" @open="getProjectData">
       <el-form ref="form" :inline="true"  :model="form" :rules="rules" size="small" label-width="76px">
         <el-form-item label="设备名称" prop="username">
           <el-input v-model="form.device_name" />
@@ -71,8 +71,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="cancelCU">取消</el-button>
-        <el-button type="primary" @click="submitCU">确认</el-button>
+        <el-button type="text" size="mini" @click="cancelCU">取消</el-button>
+        <el-button type="primary" size="mini" @click="submitCU">确认</el-button>
       </div>
     </el-dialog>
     <div class="table-container">

@@ -47,3 +47,39 @@ class SubProject(db.Model):
             'end_time': self.end_time,
         }
         return json_data
+
+
+class ParticipantsInfo(db.Model):
+    """docstring for participantsInfo"""
+    __tablename__ = 'participants_information'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    project_id = db.Column(db.Integer, nullable=True)
+    participants_name = db.Column(db.String(255), nullable=True)
+    participants_sex = db.Column(db.Integer, nullable=True)
+    participants_tel = db.Column(db.String(255))   
+    participants_work_status = db.Column(db.Integer, nullable = True)   
+    participants_qualification = db.Column(db.String(255))   
+    def __init__(self, project_id, participants_name, 
+        participants_sex, participants_tel, participants_work_status, participants_qualification):
+        self.project_id = project_id
+        self.participants_name = participants_name,
+        self.participants_sex = participants_sex,
+        self.participants_tel = participants_tel,
+        self.participants_work_status = participants_work_status,
+        self.participants_qualification = participants_qualification
+    def to_json(self):
+        json_data = {
+            'id': self.id,
+            'project_id': self.project_id,
+            'participants_name': self.participants_name,
+            'participants_sex': self.participants_sex,
+            'participants_tel': self.participants_tel,
+            'participants_work_status': self.participants_work_status,
+            'participants_qualification': self.participants_qualification
+        }
+        return json_data
+    
+
+
+
+        

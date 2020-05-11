@@ -10,6 +10,8 @@ import employee from '@/views/operation/emp/employee'
 import sysmonitor from '@/views/operation/sysmonitor/systemmonitor'
 import notFound from '@/views/404'
 import schedulemanager from '@/views/schedule/manager'
+import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
+
 Vue.use(Router)
 
 export default new Router({
@@ -29,6 +31,11 @@ export default new Router({
           path: '/4-1',
           name: '4-1',
           component: schedulemanager
+        },
+        {
+          path: '/4-3',
+          name: '4-3',
+          component: participantsinfo
         },
         {
             path: '/5-1',

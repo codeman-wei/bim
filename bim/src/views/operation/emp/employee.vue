@@ -140,7 +140,7 @@ export default {
             })
         },
         handleSizeChange(val) {
-            this.page = 0
+            this.page = 1
             this.size = val
             this.initData()
         },
