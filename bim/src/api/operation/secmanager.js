@@ -29,11 +29,22 @@ export function edit(data) {
   )
 }
 
-export function del(id) {
+export function del(data) {
   return request(
     {
-      url: '/secmanager/del/' + id,
+      url: '/secmanager/del',
       method: 'delete',
+      data
+    }
+  )
+}
+
+export function deleteBatchEmp(param) {
+  return request(
+    {
+      url: '/secmanager/delBatch',
+      method: 'post',
+      data: param
     }
   )
 }

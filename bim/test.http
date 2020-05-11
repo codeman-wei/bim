@@ -11,13 +11,18 @@ content-type: application/json
 
 {
   "project_id": 3,
-  "device_name": "利洋9（锚艇）",
+  "device_name": "利d22（锚艇）",
   "specification": "",
   "number": 1
 }
 
 ###
-DELETE  http://localhost:5000/secmanager/delete/6
+DELETE  http://localhost:5000/secmanager/del
+content-type: application/json
+
+{
+  "ids": "10,11"
+}
 
 ###
 
@@ -27,7 +32,7 @@ content-type: application/json
 {
   "id": 6,
   "project_id": 3,
-  "device_name": "利洋9（锚艇）",
+  "device_name": "利洋1（锚艇）",
   "specification": "",
   "number": 1
 }
