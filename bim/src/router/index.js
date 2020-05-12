@@ -13,6 +13,8 @@ import schedulemanager from '@/views/schedule/manager'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
 import Test from '@/views/test'
 
+import sub2 from '@/views/structure/sub2'
+
 Vue.use(Router)
 
 export default new Router({
@@ -62,7 +64,13 @@ export default new Router({
           path: '/test',
           name: 'test',
           component: Test
-        }
+        },
+        {
+          path: '/sub2',
+          name: 'sub2',
+          component: sub2
+        },
+        
       ],
     },
 

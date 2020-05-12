@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div style="height: 100%">
         <el-row>
             <my-header></my-header>
         </el-row>
-        <el-row >
+        <el-row style="height: 100%">
             <el-col :span="4">
                 <!-- <h5 class = "">首页</h5> -->
                 <el-menu
@@ -25,7 +25,7 @@
                     </template>
                     <el-menu-item-group>
                         <el-menu-item index="2-1">整体模型</el-menu-item> 
-                        <el-menu-item index="2-2">通航孔桥附属设施</el-menu-item>
+                        <el-menu-item index="sub2">通航孔桥附属设施</el-menu-item>
                         <el-menu-item index="2-3">非通航孔桥结构附属设施</el-menu-item>
                         <el-menu-item index="2-4">全桥风屏障及声屏障</el-menu-item>
                         <el-menu-item index="2-5">桥梁综合接地设施</el-menu-item>
@@ -80,7 +80,7 @@
                 </el-menu-item>
             </el-menu>
             </el-col>
-            <el-col :span="20">
+            <el-col :span="20" style="height: 100%">
                 <!-- <div class='Imgroll' >
                     <el-carousel >
                         <el-carousel-item v-for="(item,index) in imgUrls" :key="index">

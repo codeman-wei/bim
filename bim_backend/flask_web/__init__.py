@@ -35,10 +35,11 @@ db = SQLAlchemy(app)
 
 # 注册蓝图
 
-from flask_web.Module import LoginModule, UserModule, EmployeeModule, ProjectModule,SecmanagerModule
+from flask_web.Module import LoginModule, UserModule, EmployeeModule, ProjectModule,SecmanagerModule, UploadModule
 
 app.register_blueprint(LoginModule.loginModule)
 app.register_blueprint(UserModule.userModule, url_prefix="/user")
 app.register_blueprint(EmployeeModule.employeeModule, url_prefix="/employee")
 app.register_blueprint(ProjectModule.projectModule, url_prefix="/project")
 app.register_blueprint(SecmanagerModule.secmanagerModule, url_prefix="/secmanager")
+app.register_blueprint(UploadModule.uploadModule, url_prefix="/upload")
