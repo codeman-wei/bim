@@ -14,6 +14,7 @@ import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo
 import Test from '@/views/test'
 
 import sub2 from '@/views/structure/sub2'
+import health from '@/views/structure/health'
 
 Vue.use(Router)
 
@@ -69,6 +70,11 @@ export default new Router({
           path: '/sub2',
           name: 'sub2',
           component: sub2
+        },
+        {
+          path: '/health',
+          name: 'health',
+          component: health
         },
         
       ],

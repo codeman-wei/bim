@@ -15,6 +15,7 @@
           />
         </div>
         <el-tree
+          highlight-current
           :data="structureData"
           :props="defaultProps"
           :expand-on-click-node="false"
@@ -32,6 +33,7 @@
             action="http://127.0.0.1:5000/upload/img"
             :on-preview="handlePreview"
             :show-file-list="false"
+            :data="{'test':'123'}"
             :on-success="handleUploadSuccess">
             <el-button
               slot="default"
@@ -44,7 +46,10 @@
           </el-upload>
         </div>
         <div class="img-div">
-          <img :src="imageApi + '/sub2/辅助墩及边墩墩顶检查设施图.jpg'" title="点击上传头像" >
+          <img v-if="trigger" :src="imagePath" title="无此图片" >
+          <span v-else>
+            点击左边选项
+          </span>
         </div>
       </el-col>
       <el-col :xs="9" :sm="10" :md="11" :lg="11" :xl="11">
@@ -76,7 +81,7 @@ import { getTree } from '@/api/structure/imagePath';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
-  name: 'Sub2',
+  name: 'Health',
   components: { Treeselect },
   computed: {
     ...mapGetters([
@@ -86,24 +91,8 @@ export default {
   },
   data() {
     return {
-      deptName: '',
-      structureData:  [ {
-          id: 'a',
-          label: 'a',
-          children: [ {
-            id: 'aa',
-            label: 'aa',
-          }, {
-            id: 'ab',
-            label: 'ab',
-          } ],
-        }, {
-          id: 'b',
-          label: 'b',
-        }, {
-          id: 'c',
-          label: 'c',
-        } ],
+      deptName: '', imagePath: '', trigger: false,
+      structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
     }
   },
@@ -120,22 +109,22 @@ export default {
     }
   },
   methods: {
-    // 获取左侧部门数据
     getDeptDatas() {
-      let param = {}
+      let param = { belong: '健康监测系统预留件' }
       getTree(param).then(res => {
-        console.log(res)
+        this.structureData.push(res.data)
       })
-      console.log('getDeptDatas')
     },
     handleNodeClick(data) {
-      console.log(data)
+      if(data.id !== 0) {
+        this.trigger = true
+        // console.log(data)
+        this.imagePath = this.imageApi + '/health/' + data.path
+      }
     },
     handlePreview() {
-
     },
-    handleUploadSuccess() {
-
+    handleUploadSuccess(res) {
     },
   }
 }
