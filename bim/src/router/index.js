@@ -9,7 +9,7 @@ import userinfo from '@/views/userinformation/userinfo'
 import employee from '@/views/operation/emp/employee'
 import sysmonitor from '@/views/operation/sysmonitor/systemmonitor'
 import notFound from '@/views/404'
-import schedulemanager from '@/views/schedule/manager'
+import schedulemanager from '@/views/schedule/manager/manager'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
 import Test from '@/views/test'
 

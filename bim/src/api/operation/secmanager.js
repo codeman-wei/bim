@@ -48,3 +48,14 @@ export function deleteBatchEmp(param) {
     }
   )
 }
+
+
+export function loadTree() {
+  return request(
+    {
+      url: '/secmanager/test2',
+      method: 'get',
+
+    }
+  )
+}

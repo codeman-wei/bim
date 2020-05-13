@@ -9,14 +9,25 @@ projectModule = Blueprint('projectModule',__name__)
 
 @projectModule.route('/',methods = ['GET'])
 @auth.login_required
-def getAllEmp():
-    projects = Project.query.all()
-    return_data = []
-    for index in range(0, len(projects), 3):
+def getAllProject():
+    page = int(request.args.get("page"))
+    size = int(request.args.get("size"))
+    image_name = request.args.get("imageName")
+    if image_name is not None:
+        totalElements = Project.query.filter(Project.item_name.like("%" + image_name + "%")).count()
+        projects = Project.query.filter(Project.item_name.like("%" + image_name + "%")).offset((page - 1) * size).limit(size).all()
+    else:
+        totalElements = Project.query.count()
+        projects = Project.query.offset((page - 1) * size).limit(size).all()
+    return_data = {}
+    data = []
+    for index in range(0, len(projects), 4):
         temp = []
-        for p in projects[index: index + 3]:
+        for p in projects[index: index + 4]:
             temp.append(p.to_json())
-        return_data.append(temp)
+        data.append(temp)
+    return_data['content'] = data
+    return_data['totalElements'] = totalElements  
     return jsonify({'code':'200','data':return_data,'error':''})
 
 @projectModule.route('/subproject',methods = ['GET'])

@@ -32,17 +32,83 @@
             align="center">
               您的浏览器不支持视频播放
           </video>
+          <br>
+          <br>
+
+          <el-input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            style="width: 300px;">
+          </el-input>
+
+          <el-tree
+            class="filter-tree"
+            :data="treedata"
+            :props="defaultProps"
+            default-expand-all
+            :filter-node-method="filterNode"
+            ref="tree">
+          </el-tree>
+
+
+
+
+
+
         </div>
     </div>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { loadTree } from '@/api/operation/secmanager'
 export default {
   data() {
     return {
       fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+
+      filterText: '',
+      treedata: [],
+        // [{
+        //   id: 1,
+        //   label: '健康监测系统预留件',
+        //   children: [
+        //     {
+        //       id: 1,
+        //       label: '鼓屿门水道桥道砟预埋镀锌钢管布置图',
+        //     },
+        //     {
+        //       id: 2,
+        //       label: '鼓屿门水道桥预留件M1布置图',
+        //     },
+        //     {
+        //       id: 3,
+        //       label: '鼓屿门水道桥预留件M2M6布置图',
+        //     },
+        //     {
+        //       id: 4,
+        //       label: '鼓屿门水道桥预留件M3M6布置图',
+        //     },
+        //     {
+        //       id: 5,
+        //       label: '鼓屿门水道桥预留件M4M5M6布置图',
+        //     },            
+         
+        //   ]
+        // }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
     }
+  },
+  watch: {
+      filterText(val) {
+        this.$refs.tree.filter(val);
+      }
+  },
+  created() {
+    this.loadTree()
   },
   computed: {
     ...mapGetters([
@@ -51,6 +117,24 @@ export default {
     ])
   },
   methods: {
+    loadTree() {
+      loadTree().then(res =>{
+        console.log(res)
+        this.treedata.push(res.data)
+      })
+    },
+
+
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+
+
+
+
+
+
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
