@@ -8,11 +8,12 @@ import os,random,string
 secmanagerModule = Blueprint('secmanagerModule',__name__)
 
 @secmanagerModule.route('/', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def getAll():
     page = int(request.args.get("page"))
     size = int(request.args.get("size"))
     blurry = request.args.get("blurry")
+    # blurry = None
     if blurry is not None:
         totalElements = Secmanager.query.filter(Secmanager.device_name.like("%" + blurry + "%")).count()
         items = Secmanager.query.filter(Secmanager.device_name.like("%" + blurry + "%")).offset((page - 1) * size).limit(size).all()
@@ -63,18 +64,36 @@ def edit():
         return jsonify({'status':'error','data':'','error':'更新失败'})
     return jsonify({'status':'success','data':'','msg':'更新成功'})
 
-@secmanagerModule.route('/test',methods = ['POST'])
-# @auth.login_required
-def test():
-    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 24))
-    file = request.files['file']
-    filename = file.filename
-    # 将图片名转化成24位随机码 以防重复
-    imgName = ran_str + os.path.splitext(filename)[-1]
-    save_path = os.path.join(app.config["BASE_DIR"], imgName)
 
-    file.save(save_path)
-    return jsonify({'status': 'success', 'data': '', 'msg': '文件添加成功'})
+@secmanagerModule.route('/del/<int:id>',methods = ['DELETE'])
+# @auth.login_required
+def delete(id):
+    sec = Secmanager.query.filter_by(id=id).first()
+    try:
+        db.session.delete(sec)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'data':'', 'error': '删除失败'})
+    return jsonify({'status': 'success', 'data': '', 'msg': '删除成功'})
+
+
+@secmanagerModule.route('/delAll',methods = ['DELETE'])
+# @auth.login_required
+def deleteAll():
+    data = json.loads(str(request.data, encoding="utf-8"))
+    ids = data['ids']
+    for i in ids:
+        sec = Secmanager.query.filter_by(id=i).first()
+        try:
+            db.session.delete(sec)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'status': 'error', 'data': '', 'error': '删除失败'})
+    return jsonify({'status': 'success', 'data': '', 'msg': '删除成功'})
+
+
 
 
 

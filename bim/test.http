@@ -6,7 +6,7 @@ GET  http://localhost:5000/project/list
 
 ###
 
-GET  http://localhost:5000/structure/tree?belong=健康监测系统预留件
+GET  http://localhost:5000/structure/tree?belong=通航孔桥钢梁附属设施
 
 ###
 

@@ -15,7 +15,6 @@
           />
         </div>
         <el-tree
-          style="overflow:hidden"
           highlight-current
           :data="structureData"
           :props="defaultProps"
@@ -47,12 +46,7 @@
           </el-upload>
         </div>
         <div class="img-div">
-          <div v-if="trigger" >
-
-            <img :src="imagePath" title="无此图片" >
-            <span >{{imageName}}</span>
-            <!-- <el-tag style="margin-top: 20px" type="success">{{imageName}}</el-tag> -->
-          </div>
+          <img v-if="trigger" :src="imagePath" title="无此图片" >
           <span v-else>
             点击左边选项
           </span>
@@ -97,7 +91,7 @@ export default {
   },
   data() {
     return {
-      deptName: '', imagePath: '', imageName: '', trigger: false,
+      deptName: '', imagePath: '', trigger: false,
       structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
     }
@@ -116,7 +110,7 @@ export default {
   },
   methods: {
     getDeptDatas() {
-      let param = { belong: '健康监测系统预留件' }
+      let param = { belong: '通航孔桥钢梁附属设施' }
       getTree(param).then(res => {
         this.structureData = res.data
       })
@@ -124,7 +118,6 @@ export default {
     handleNodeClick(data) {
       if(data.id !== 0) {
         this.trigger = true
-        this.imageName = data.imageName
         // console.log(data)
         this.imagePath = this.imageApi + '/health/' + data.path
       }
@@ -152,7 +145,6 @@ export default {
     }
 
     .img-div {
-      text-align: center;
       padding: 20px;
       border: 1px solid #eee
     }

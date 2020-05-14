@@ -1,14 +1,5 @@
 import request from '@/utils/request'
 
-export function getAll(param) {
-    return request(
-    {
-      url: '/secmanager/',
-      method:'get',
-      params: param
-    })
-}
-
 export function add(data) {
   return request(
     {
@@ -29,22 +20,23 @@ export function edit(data) {
   )
 }
 
-export function del(data) {
+export function del(id) {
   return request(
     {
-      url: '/secmanager/del',
+      url: '/secmanager/del/' + id,
+      method: 'delete',
+    }
+  )
+}
+
+export function delAll(data) {
+  return request(
+    {
+      url: '/secmanager/delAll',
       method: 'delete',
       data
     }
   )
 }
 
-export function deleteBatchEmp(param) {
-  return request(
-    {
-      url: '/secmanager/delBatch',
-      method: 'post',
-      data: param
-    }
-  )
-}
+export default { add, edit, del, delAll }
