@@ -9,7 +9,7 @@ structureModule = Blueprint('structureModule',__name__)
 
 
 def changeToTreeItem(data):
-    item = {"id": data['id'],"pid": data["pid"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl']}
+    item = {"id": data['id'],"belong_id": data["belong_id"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl']}
     return item
 
 # @structureModule.route('/tree',methods = ['GET'])
@@ -32,10 +32,10 @@ def getTree():
 
     trees = []
     for item in infos:
-        if (item['pid'] == 0):
+        if (item['belong_id'] == 0):
             trees.append(item)
             for it in infos:
-                if(item['id'] == it['pid']):
+                if(item['id'] == it['belong_id']):
                     if("children" not in item):
                         item["children"] = []
                     item["children"].append(it)

@@ -40,3 +40,13 @@ export function delAll(data) {
 }
 
 export default { add, edit, del, delAll }
+
+export function loadTree() {
+  return request(
+    {
+      url: '/secmanager/test2',
+      method: 'get',
+
+    }
+  )
+}

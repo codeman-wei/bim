@@ -177,7 +177,7 @@ export default {
         if(this.keyword !== '') {
           params['participants_name'] = this.keyword
         }
-        getParticipantsInfoByPID(params).then(res => {
+      getParticipantsInfoByPID(params).then(res => {
           this.tableData2 = res.data.content
           this.total2 = res.data.totalElements
         })

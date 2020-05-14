@@ -9,10 +9,10 @@ import userinfo from '@/views/userinformation/userinfo'
 import employee from '@/views/operation/emp/employee'
 import sysmonitor from '@/views/operation/sysmonitor/systemmonitor'
 import notFound from '@/views/404'
-import schedulemanager from '@/views/schedule/manager'
+import schedulemanager from '@/views/schedule/manager/manager'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
 import Test from '@/views/test'
-
+import bridgesynthesisinfo from '@/views/structure/bridgesynthesis/bridgesynthesisInfo'
 import sub2 from '@/views/structure/sub2'
 import health from '@/views/structure/health'
 
@@ -31,6 +31,11 @@ export default new Router({
       name: 'Home',
       component: Home,
       children: [
+        {
+          path:'/2-5',
+          name: '2-5',
+          component: bridgesynthesisinfo
+        },
         {
           path: '/4-1',
           name: '4-1',
