@@ -16,23 +16,24 @@ uploadModule = Blueprint('uploadModule',__name__)
 @auth.login_required
 def uploadImg():
     
-    data = request.form  #
+    data = request.form
     imageName = data.get("imageName")
     imgaeAbstract = data.get("imgaeAbstract")
     belong = data.get("structName")
-    print(request.files)
     file = request.files['file']
-    structorObject = StructorInfo.query.filter_by(struct_name = belong).first()
-    if structorObject is not None:
-        belong_id = structorObject.to_json().get('id')
-    tempDir = os.path.join(base, belong)
+    # structorObject = StructorInfo.query.filter_by(struct_name = belong).first()
+    # if structorObject is not None:
+    #     belong_id = structorObject.to_json().get('id')
+    tempDir = os.path.join(base, 'image')
+    tempDir = os.path.join(tempDir, belong)
     if not os.path.exists(tempDir):
         os.mkdir(tempDir)
     ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 24))
     imgName = ran_str + os.path.splitext(file.filename)[-1]
     save_path = os.path.join(tempDir, imgName)
     file.save(save_path)
-    imgInfo = ImagePath(belong = belong, image_name = imageName, image_url = imgName, abstract = imgaeAbstract, belong_id = belong_id)
+    imageUrl = '/' + belong + '/' + imgName
+    imgInfo = ImagePath(belong=belong, pid=0, image_name=imageName, image_url = imageUrl, abstract = imgaeAbstract)
     try:
         db.session.add(imgInfo)
         db.session.commit()    # flask默认使用事务，所以每一次操作都要提交事务

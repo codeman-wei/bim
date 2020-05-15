@@ -81,7 +81,7 @@ import { getTree } from '@/api/structure/imagePath';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
-  name: 'Health',
+  name: 'kqgl1',
   components: { Treeselect },
   computed: {
     ...mapGetters([

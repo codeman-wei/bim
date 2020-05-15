@@ -39,9 +39,6 @@
           </div>
         </div>
 
-
-
-
       </el-col>
       <el-col :xs="8" :sm="8" :md="9" :lg="9" :xl="9" >
         <div class="" align="right">
@@ -53,10 +50,6 @@
           <span v-else>
             点击左边选项
           </span>
-
-
-
-
         </div>
           <!-- <div style="width: 100%" align="center">
             <video

@@ -8,22 +8,24 @@
         <el-input type="textarea" v-model="form.abstract" auto-complete="on" style="width: 370px;" ></el-input>
       </el-form-item>
       <el-form-item label="部件图片">
+        <!-- 设置auto-upload = false 则 before-upload将不会触发-->
+        <!-- 设置 :on-exceed="handleExceed"  -->
+        <!-- 设置 before-remove 移除后触发-->
+        <!-- 设置 on-remove 移除时触发-->
         <el-upload
           action="http://127.0.0.1:5000/upload/img"
+          class="upload-demo"
           ref="upload"
-          list-type="picture-card"
-          accept=".jpeg,.jpg,.png"    
+          drag
+          :before-upload="beforeUpload"
           :limit="1"
           :on-exceed="handleExceed"
-          :before-remove="beforeRemove"
           :on-remove="handleRemove"
-          :on-preview="handlePictureCardPreview"    
-          :before-upload="beforeUpload"
+          :before-remove="beforeRemove"
+          accept=".jpeg,.jpg,.png" 
         >
-          <i slot="default" class="el-icon-plus"/>
-          <el-dialog :append-to-body="true" :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" >
-          </el-dialog>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </el-form-item>
@@ -52,10 +54,7 @@ export default {
       return {
           loading: false,
           files: '',
-          dialogImageUrl: '',
-          dialogVisible: false,
           fileName: '',
-          trigger: false,
           filelist: [],
           dialog: false,
           form: {
@@ -76,16 +75,13 @@ export default {
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       },
+
       handleRemove(file, fileList) {
-        this.trigger = !this.trigger
+        console.log("hitei")
       },
+
       beforeRemove(file, fileList) {
-        if (this.trigger) {
-          return this.$confirm(`确定移除 ${ file.name }？`);
-        } else {
-          this. trigger = true
-          return false
-        }
+        return this.$confirm(`确定移除 ${ file.name }？`);
       },
       /*
         file.status ==> ready / success
@@ -107,15 +103,31 @@ export default {
         return false // 返回false不会自动上传
       },
 
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+      handleChange(file, fileList){
+        if(file.status === 'ready')
+        {
+          this.files = file;
+          const extension = file.name.split('.')[1] === 'jpg'
+          const extension2 = file.name.split('.')[1] === 'png'
+          const isLt2M = file.size / 1024 / 1024 < 5
+          if (!extension && !extension2) {
+            this.$message.warning('上传模板只能是 jpg、png格式!')
+            return
+          }
+          if (!isLt2M) {
+            this.$message.warning('上传模板大小不能超过 5MB!')
+            return
+          }
+          this.fileName = file.name;
+          return false // 返回false不会自动上传
+        }
       },
 
       cancel() {
           this.dialog = false
-          this.resetForm()
       },
+
+
       submitUpload() {
         if(this.fileName == ""){
           this.$message.warning('请选择要上传的文件！')
@@ -135,6 +147,7 @@ export default {
           }
         })
       },
+
       doAdd() {
         var token = sessionStorage.getItem('token'); // 获取token验证
 
@@ -157,18 +170,18 @@ export default {
             type: 'success',
             duration: 2500
           })
-          this.$parent.getDeptDatas()
           this.loading = false
-          
         }).catch(err => {
           this.loading = false
+          //console.log(err.response.data.message)
         })
       },
+
+
       resetForm() {
-        this.$refs.upload.clearFiles()
-        this.trigger = false
         this.dialog = false
         this.$refs['form'].resetFields()
+
       },
       doEdit() {
         console.log(this.isAdd)
