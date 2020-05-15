@@ -32,13 +32,26 @@
         <!--工具栏-->
         <div align="right">
           <!--搜索框 新增框-->
-          <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadimage" >编辑</el-button>
+          <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadimage" :disabled="!trigger">编辑</el-button>
         </div>
         <div class="img-div">
-          <img  v-if="trigger" :src="imagePath"  width="100%">
-          <span v-else>
+          <div v-if="trigger">
+            <img  :src="imagePath"  width="100%" style="text-align: center;"> 
+            <div class="content">
+              <span>{{imageInfo.imageName}}</span>
+              <div style="text-indent: 2em;margin-top:3px;" v-if="imageInfo.abstract !== ''">
+                {{imageInfo.abstract}}
+                <!-- 平潭海峡公铁两用大桥啦！世界最长的跨海峡公铁两用大桥一一平潭海峡公铁两用大桥，目前公路部分主体工程已经全部完工，铁路部分最后一座铁路桥正在架梁铺轨。通车后，大桥作为京台高速的咽喉部分，将有力推进海峡两岸基础设施的联通。这里是世界三大风暴海域之一，一年中6级以上大风天超过300天这里无风也起浪水流速度相当于长江中下游洪峰这里小岛棋布、地质复杂坚硬如铁的光板岩石是打桩建墩者的噩梦..... -->
+              </div>
+              <div style="margin-top:3px; font-weight:normal;">
+                暂无说明，请添加
+              </div>
+            </div>
+          </div>
+          <div v-else style="">
             点击左边选项
-          </span>
+          </div>
+
         </div>
       </el-col>
       <el-col :xs="8" :sm="8" :md="9" :lg="9" :xl="9" style="padding: 10px">
@@ -98,6 +111,7 @@ export default {
       deptName: '', imagePath: '', imageName: '', trigger: false, isAdd:true,
       structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
+      imageInfo: {}
     }
   },
   computed: {
@@ -117,7 +131,8 @@ export default {
       if(data.id !== 0) {
         this.trigger = true
         this.imageName = data.imageName
-        // console.log(data)
+        this.imageInfo = data
+        console.log(this.imageInfo)
         this.imagePath = this.imageApi + data.path
       }
     },
@@ -125,10 +140,35 @@ export default {
       this.isAdd = true
       this.$refs.image.dialog = true
     },
+    /*
+    abstract: (...)
+    id: (...)
+    imageName: (...)
+    label: (...)
+    path: (...)
+    pid: (...)
+    videoBottomUrl: (...)
+    videoLeftUrl: (...)
+    videoRightUrl: (...)
+    videoUpUrl: (...)
+    */
     uploadimage() {
       this.isAdd=false
-      this.$refs.image.dialog = true
+      const _this = this.$refs.image
+      _this.form = {
+          id: this.imageInfo.id,
+          name: this.imageInfo.imageName,
+          abstract: this.imageInfo.abstract,
+      }
+      let tempDic = {
+        name: this.imageInfo.imageName,
+        url: this.imagePath
+      }
+      _this.fileList.push(tempDic)
+      _this.fileName = this.imageInfo.imageName
+      _this.dialog = true
     },
+    
     uploadvideo() {
       this.$refs.video.dialog = true
     },
@@ -155,19 +195,25 @@ export default {
     }
 
     .img-div {
-      text-align: center;
       padding: 7px;
       margin-top: 20px;
       border: 1px solid #eee
     }
 
     .video-div {
-      margin-top: 15px;
-      padding: 15px 20px;
+      padding: 7px;
+      margin-top: 20px;
+      border: 1px solid #eee
     }
 
     img {
       width: 100%;
+    }
+    .content {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 15px;
+      font-family: Arial, Helvetica, sans-serif;
     }
   }
 </style>

@@ -7,9 +7,15 @@ import os,random,string
 
 structureModule = Blueprint('structureModule',__name__)
 
-
+# : None, 'belong_id': None, 'abstract': ''}
+# {'id': 28, 'pid': 0, 'belong': '健康监测系统预留件', 'imageName': '元洪航道桥预
+# 留件M7布置图', 'imageUrl': '/健康监测系统预留件/OwdqMTreo4ak3ZPyD9BY8pXG.png', '
+# videoUpUrl': None, 'videoLeftUrl': None, 'videoRightUrl': None, 'videoBottomUrl'
+# : None, 'belong_id': None, 'abstract': ''}
 def changeToTreeItem(data):
-    item = {"id": data['id'],"pid": data["pid"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl']}
+    print(data)
+    item = {"id": data['id'], "pid": data["pid"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl'],
+            "abstract": data['abstract'], "videoUpUrl": data['videoUpUrl'], "videoLeftUrl": data['videoLeftUrl'], "videoRightUrl": data['videoRightUrl'], "videoBottomUrl":data['videoBottomUrl']}
     return item
 
 # @structureModule.route('/tree',methods = ['GET'])

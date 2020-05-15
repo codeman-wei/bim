@@ -19,6 +19,7 @@
           :on-remove="handleRemove"
           :on-preview="handlePictureCardPreview"    
           :before-upload="beforeUpload"
+          :file-list="fileList"
         >
           <i slot="default" class="el-icon-plus"/>
           <el-dialog :append-to-body="true" :visible.sync="dialogVisible">
@@ -36,7 +37,7 @@
 </template>
 <script>
 
-import { upload } from '@/api/structure/uploadimage'
+import { upload, edit } from '@/api/structure/uploadimage'
 export default {
     props: {
       isAdd: {
@@ -56,9 +57,12 @@ export default {
           dialogVisible: false,
           fileName: '',
           trigger: false,
-          filelist: [],
+          fileList: [],
           dialog: false,
           form: {
+            id: '',
+            pid: '',
+
             name: '',
             abstract: ''
           }, 
@@ -77,10 +81,12 @@ export default {
         this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       },
       handleRemove(file, fileList) {
+        this.fileName = ''
         this.trigger = !this.trigger
       },
       beforeRemove(file, fileList) {
         if (this.trigger) {
+          
           return this.$confirm(`确定移除 ${ file.name }？`);
         } else {
           this. trigger = true
@@ -91,6 +97,7 @@ export default {
         file.status ==> ready / success
       */
       beforeUpload(file) {
+        console.log(file)
         this.files = file;
         const extension = file.name.split('.')[1] === 'jpg'
         const extension2 = file.name.split('.')[1] === 'png'
@@ -114,7 +121,7 @@ export default {
 
       cancel() {
           this.dialog = false
-          this.resetForm()
+          this.resetForm('form')
       },
       submitUpload() {
         if(this.fileName == ""){
@@ -137,7 +144,6 @@ export default {
       },
       doAdd() {
         var token = sessionStorage.getItem('token'); // 获取token验证
-
         let requestConfig = {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -164,27 +170,48 @@ export default {
           this.loading = false
         })
       },
-      resetForm() {
+      resetForm(formName) {
+        this.fileList = []
         this.$refs.upload.clearFiles()
         this.trigger = false
         this.dialog = false
-        this.$refs['form'].resetFields()
+        this.$refs[formName].resetFields()
       },
       doEdit() {
-        console.log(this.isAdd)
-        // edit(this.form).then(res => {
-        //   this.resetForm()
-        //   this.$notify({
-        //     title: '修改成功',
-        //     type: 'success',
-        //     duration: 2500
-        //   })
-        //   this.loading = false
-        //   this.$parent.init()
-        // }).catch(err => {
-        //   this.loading = false
-        //   console.log(err.response.data.message)
-        // })
+        var token = sessionStorage.getItem('token'); // 获取token验证
+        let requestConfig = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Basic ${new Buffer(token).toString('base64')}`
+          }
+        }    
+        // console.log(this.fileList[0])
+        this.loading = false
+        let fileFormData = new FormData();
+        fileFormData.append('id', this.form.id)
+        fileFormData.append('imageName', this.form.name)
+        fileFormData.append('imgaeAbstract', this.form.abstract)
+        fileFormData.append('structName', this.belong)
+        //fileFormData.append('file', this.fileList[0])
+        // 先判断图片是否重新上传
+        if(this.files === null)
+          console.log(tljlk)
+        else
+          fileFormData.append('file', this.files)
+        edit(fileFormData, requestConfig).then(res => {
+          this.dialog = false
+          this.resetForm('form')
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            duration: 2500
+          })
+          this.$parent.getDeptDatas()
+
+          this.loading = false
+        }).catch(err => {
+          this.loading = false
+        })
       },
     }
 }
