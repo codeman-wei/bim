@@ -61,26 +61,25 @@
           <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadvideo" :disabled="!trigger" >导入</el-button>
         </div>
         <div class="video-div">
-          <img v-if="trigger" :src="imagePath" title="无此图片" width="100%">
+          <div v-if="trigger" >
+            <video
+              :src="videoPath"
+              controls="controls"
+              style="width: 100%"
+              align="center">
+                您的浏览器不支持视频播放
+            </video>
+            <div style="display: flex;justify-content: space-around; padding: 20px">
+              <el-button :disabled="videoLeftPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-left" @click="getVideoPath('left')"></el-button>
+              <el-button :disabled="videoUpPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-top" @click="getVideoPath('up')"></el-button>
+              <el-button :disabled="videoRightPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-right" @click="getVideoPath('right')"></el-button>
+              <el-button :disabled="videoBottomPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-bottom" @click="getVideoPath('bottom')"></el-button>
+            </div>
+          </div>
           <span v-else>
             点击左边选项
           </span>
         </div>
-        <!-- <div style="width: 100%" align="center">
-          <div style="display: flex;justify-content: space-around; padding: 20px">
-            <el-button class="filter-item" size="mini" type="success" icon="el-icon-caret-left"></el-button>
-            <el-button class="filter-item" size="mini" type="success" icon="el-icon-caret-top"></el-button>
-            <el-button class="filter-item" size="mini" type="success" icon="el-icon-caret-right"></el-button>
-            <el-button class="filter-item" size="mini" type="success" icon="el-icon-caret-bottom"></el-button>
-          </div>
-          <video
-            src="http://127.0.0.1:5000/static/test.mp4"
-            controls="controls"
-            style="max-height: 500px"
-            align="center">
-              您的浏览器不支持视频播放
-          </video>
-        </div> -->
       </el-col>
     </el-row>
     <uploadImage ref="image" :isAdd="isAdd" :belong="belong"/>
@@ -108,6 +107,7 @@ export default {
   data() {
     return {
       belong: "健康监测系统预留件", selectId: 0,
+      videoUpPath: '', videoPath: '',videoLeftPath: '', videoRightPath: '', videoBottomPath: '',
       deptName: '', imagePath: '', imageName: '', trigger: false, isAdd:true,
       structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
@@ -128,13 +128,26 @@ export default {
       })
     },
     handleNodeClick(data) {
-      if(data.id !== 0) {
-        this.trigger = true
-        this.selectId = data.id
-        this.imageName = data.imageName
-        this.imageInfo = data
-        console.log(this.imageInfo)
-        this.imagePath = this.imageApi + data.path
+      this.trigger = true
+      this.selectId = data.id
+      this.imageName = data.imageName
+      this.imageInfo = data
+      this.imagePath = this.imageApi + data.path
+      this.videoUpPath = data.videoUpUrl
+      this.videoLeftPath = data.videoLeftUrl
+      this.videoRightPath = data.videoRightUrl
+      this.videoBottomPath = data.videoBottomUrl
+    },
+    getVideoPath(pos) {
+      switch (pos) {
+        case 'left': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoLeftPath
+          break;
+        case 'up': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoUpPath
+          break;
+        case 'right': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoRightPath
+          break;
+        case 'bottom': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoBottomPath
+          break;
       }
     },
     add(){
