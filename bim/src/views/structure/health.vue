@@ -37,13 +37,13 @@
         <div class="img-div">
           <div v-if="trigger">
             <img  :src="imagePath"  width="100%" style="text-align: center;"> 
-            <div class="content">
-              <span>{{imageInfo.imageName}}</span>
-              <div style="text-indent: 2em;margin-top:3px;" v-if="imageInfo.abstract !== ''">
+            <div class="content" align="center">
+              <el-tag type="info">{{imageInfo.imageName}}</el-tag>
+              <div style="text-indent: 2em;margin-top:10px;" v-if="imageInfo.abstract !== ''">
                 {{imageInfo.abstract}}
                 <!-- 平潭海峡公铁两用大桥啦！世界最长的跨海峡公铁两用大桥一一平潭海峡公铁两用大桥，目前公路部分主体工程已经全部完工，铁路部分最后一座铁路桥正在架梁铺轨。通车后，大桥作为京台高速的咽喉部分，将有力推进海峡两岸基础设施的联通。这里是世界三大风暴海域之一，一年中6级以上大风天超过300天这里无风也起浪水流速度相当于长江中下游洪峰这里小岛棋布、地质复杂坚硬如铁的光板岩石是打桩建墩者的噩梦..... -->
               </div>
-              <div style="margin-top:3px; font-weight:normal;">
+              <div v-else style="margin-top:3px; font-weight:normal;">
                 暂无说明，请添加
               </div>
             </div>
@@ -58,7 +58,7 @@
         <!--工具栏-->
         <div class="" align="right">
           <!--搜索框 新增框-->
-          <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadvideo" >导入</el-button>
+          <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadvideo" :disabled="!trigger" >导入</el-button>
         </div>
         <div class="video-div">
           <img v-if="trigger" :src="imagePath" title="无此图片" width="100%">
@@ -84,7 +84,7 @@
       </el-col>
     </el-row>
     <uploadImage ref="image" :isAdd="isAdd" :belong="belong"/>
-    <uploadVideo ref="video"  />
+    <uploadVideo ref="video" :id="selectId" :belong="belong" />
   </div>
 </template>
 
@@ -107,7 +107,7 @@ export default {
   },
   data() {
     return {
-      belong: "健康监测系统预留件",
+      belong: "健康监测系统预留件", selectId: 0,
       deptName: '', imagePath: '', imageName: '', trigger: false, isAdd:true,
       structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
@@ -130,6 +130,7 @@ export default {
     handleNodeClick(data) {
       if(data.id !== 0) {
         this.trigger = true
+        this.selectId = data.id
         this.imageName = data.imageName
         this.imageInfo = data
         console.log(this.imageInfo)
@@ -140,18 +141,6 @@ export default {
       this.isAdd = true
       this.$refs.image.dialog = true
     },
-    /*
-    abstract: (...)
-    id: (...)
-    imageName: (...)
-    label: (...)
-    path: (...)
-    pid: (...)
-    videoBottomUrl: (...)
-    videoLeftUrl: (...)
-    videoRightUrl: (...)
-    videoUpUrl: (...)
-    */
     uploadimage() {
       this.isAdd=false
       const _this = this.$refs.image

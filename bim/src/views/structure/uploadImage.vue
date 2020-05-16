@@ -59,13 +59,7 @@ export default {
           trigger: false,
           fileList: [],
           dialog: false,
-          form: {
-            id: '',
-            pid: '',
-
-            name: '',
-            abstract: ''
-          }, 
+          form: { id: '', pid: '', name: '', abstract: '' }, 
           headers: {
             
           },
@@ -97,7 +91,6 @@ export default {
         file.status ==> ready / success
       */
       beforeUpload(file) {
-        console.log(file)
         this.files = file;
         const extension = file.name.split('.')[1] === 'jpg'
         const extension2 = file.name.split('.')[1] === 'png'
@@ -121,7 +114,7 @@ export default {
 
       cancel() {
           this.dialog = false
-          this.resetForm('form')
+          this.resetForm()
       },
       submitUpload() {
         if(this.fileName == ""){
@@ -137,6 +130,7 @@ export default {
             else {
               this.doEdit()
             }
+            this.resetForm()
           } else {
             return false
           }
@@ -150,14 +144,14 @@ export default {
             'Authorization': `Basic ${new Buffer(token).toString('base64')}`
           }
         }
-        let fileFormData = new FormData();
+        let fileFormData = new FormData(`Basic ${new Buffer(token).toString('base64')}`);
         fileFormData.append('imageName', this.form.name)
         fileFormData.append('imgaeAbstract', this.form.abstract)
         fileFormData.append('structName', this.belong)
         fileFormData.append('file', this.files)
         upload(fileFormData, requestConfig).then(res => {
           this.dialog = false
-          this.resetForm('form')
+          this.resetForm()
           this.$notify({
             title: '添加成功',
             type: 'success',
@@ -170,12 +164,12 @@ export default {
           this.loading = false
         })
       },
-      resetForm(formName) {
+      resetForm() {
         this.fileList = []
         this.$refs.upload.clearFiles()
         this.trigger = false
         this.dialog = false
-        this.$refs[formName].resetFields()
+        this.form = { id: '', pid: '', name: '', abstract: '' }
       },
       doEdit() {
         var token = sessionStorage.getItem('token'); // 获取token验证
@@ -185,7 +179,6 @@ export default {
             'Authorization': `Basic ${new Buffer(token).toString('base64')}`
           }
         }    
-        // console.log(this.fileList[0])
         this.loading = false
         let fileFormData = new FormData();
         fileFormData.append('id', this.form.id)
