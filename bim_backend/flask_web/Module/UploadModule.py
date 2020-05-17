@@ -74,42 +74,42 @@ def editImg():
     imgInfo.belong = belong
     imgInfo.image_name = imageName
     imgInfo.pid = 0
-    try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'status':'error','data':'','error':'更新失败'})
+    # try:
+    #     db.session.commit()
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'status':'error','data':'','error':'更新失败'})
     return jsonify({'status':'success','data': imgInfo.to_json(),'msg':'更新成功'})
 
 @uploadModule.route('/video',methods = ['POST'])
 # @auth.login_required
 def uploadVideo():
-    # file = request.files.get('file')
-    # belong = request.form.get("belong")
-    # position = request.form.get("position")
-    # id = request.form.get("id")
-    #
-    # tempDir = os.path.join(base, 'video')
-    # tempDir = os.path.join(tempDir, belong)
-    #
-    # info = ImagePath.query.filter_by(id=id).first()
-    # try:
-    #     if not os.path.exists(tempDir):
-    #         os.mkdir(tempDir)
-    #     fileName = randomName(file)
-    #     save_path = os.path.join(tempDir, fileName)
-    #     file.save(save_path)
-    #     # 根据position 来保存视频url到表中对应字段
-    #     url = '/' + belong + '/' + fileName
-    #     toChanged = 'vedio_' + position + '_url'
-    #     code = 'info.' + toChanged + '=url'
-    #     exec(code)
-    # except Exception as e:
-    #     pass
-    # try:
-    #     db.session.commit()
-    # except Exception as e:
-    #     db.session.rollback()
-    #     return jsonify({'status':'error','data':'','error':'上传失败'})
+    file = request.files.get('file')
+    belong = request.form.get("belong")
+    position = request.form.get("position")
+    id = request.form.get("id")
+
+    tempDir = os.path.join(base, 'video')
+    tempDir = os.path.join(tempDir, belong)
+
+    info = ImagePath.query.filter_by(id=id).first()
+    try:
+        if not os.path.exists(tempDir):
+            os.mkdir(tempDir)
+        fileName = randomName(file)
+        save_path = os.path.join(tempDir, fileName)
+        file.save(save_path)
+        # 根据position 来保存视频url到表中对应字段
+        url = '/' + belong + '/' + fileName
+        toChanged = 'vedio_' + position + '_url'
+        code = 'info.' + toChanged + '=url'
+        exec(code)
+    except Exception as e:
+        pass
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'上传失败'})
     return jsonify({'status': '200', 'data': '', 'msg': '更新成功'})
 
