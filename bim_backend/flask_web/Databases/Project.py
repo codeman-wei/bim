@@ -51,34 +51,39 @@ class SubProject(db.Model):
 
 class ParticipantsInfo(db.Model):
     """docstring for participantsInfo"""
-    __tablename__ = 'participants_information'
+    __tablename__ = 'participants_info'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     project_id = db.Column(db.Integer, nullable=True)
     participants_name = db.Column(db.String(255), nullable=True)
-    participants_sex = db.Column(db.Integer, nullable=True)
     participants_tel = db.Column(db.String(255))   
     participants_work_status = db.Column(db.Integer, nullable = True)   
-    participants_qualification = db.Column(db.String(255))   
+    participants_duty = db.Column(db.Text(200))   
+    participants_dept = db.Column(db.String(255))
+    participants_position = db.Column(db.String(255))
+    participants_number = db.Column(db.String(255))
     def __init__(self, project_id, participants_name, 
-        participants_sex, participants_tel, participants_work_status, participants_qualification):
+        participants_tel, participants_work_status, participants_duty, participants_dept, participants_position, participants_number):
         self.project_id = project_id
-        self.participants_name = participants_name,
-        self.participants_sex = participants_sex,
-        self.participants_tel = participants_tel,
-        self.participants_work_status = participants_work_status,
-        self.participants_qualification = participants_qualification
+        self.participants_name = participants_name
+        self.participants_tel = participants_tel
+        self.participants_work_status = participants_work_status
+        self.participants_duty = participants_duty
+        self.participants_dept = participants_dept
+        self.participants_position = participants_position
+        self.participants_number = participants_number
     def to_json(self):
         json_data = {
             'id': self.id,
             'project_id': self.project_id,
             'participants_name': self.participants_name,
-            'participants_sex': self.participants_sex,
             'participants_tel': self.participants_tel,
             'participants_work_status': self.participants_work_status,
-            'participants_qualification': self.participants_qualification
+            'participants_duty': self.participants_duty,
+            'participants_dept': self.participants_dept,
+            'participants_position': self.participants_position,
+            'participants_number': self.participants_number
         }
         return json_data
-    
 
 
 
