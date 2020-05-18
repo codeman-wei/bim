@@ -1,25 +1,23 @@
-from flask import Blueprint,render_template,request,jsonify,g
+from flask import Blueprint, render_template, request, jsonify, g
 from flask_web import auth, app
 import json
 from flask_web import db
-import os,random,string
+import os, random, string
 from flask_web.Databases.ImagePath import ImagePath, StructorInfo
 
-
-
-
 base = app.config["BASE_DIR"]
-uploadModule = Blueprint('uploadModule',__name__)
+uploadModule = Blueprint('uploadModule', __name__)
+
 
 def randomName(file, len=24):
     ran_str = ''.join(random.sample(string.ascii_letters + string.digits, len))
     suffix = os.path.splitext(file.filename)[-1]
     return ran_str + suffix
 
-@uploadModule.route('/uploadImg',methods = ['POST'])
+
+@uploadModule.route('/uploadImg', methods=['POST'])
 @auth.login_required
 def uploadImg():
-    
     data = request.form
     imageName = data.get("imageName")
     imgaeAbstract = data.get("imgaeAbstract")
@@ -37,17 +35,17 @@ def uploadImg():
     save_path = os.path.join(tempDir, imgName)
     file.save(save_path)
     imageUrl = '/' + belong + '/' + imgName
-    imgInfo = ImagePath(belong=belong, pid=0, image_name=imageName, image_url = imageUrl, abstract = imgaeAbstract)
+    imgInfo = ImagePath(belong=belong, pid=0, image_name=imageName, image_url=imageUrl, abstract=imgaeAbstract)
     try:
         db.session.add(imgInfo)
-        db.session.commit()    # flask默认使用事务，所以每一次操作都要提交事务
+        db.session.commit()  # flask默认使用事务，所以每一次操作都要提交事务
     except Exception as e:
         db.session.rollback()
-        return jsonify({'status':'error','data':'','error':'添加失败'})
-    return jsonify({'status':'success','data': '','msg':'添加成功'})
+        return jsonify({'status': 'error', 'data': '', 'error': '添加失败'})
+    return jsonify({'status': 'success', 'data': '', 'msg': '添加成功'})
 
 
-@uploadModule.route('/editImg',methods = ['PUT'])
+@uploadModule.route('/editImg', methods=['PUT'])
 @auth.login_required
 def editImg():
     data = request.form
@@ -55,7 +53,7 @@ def editImg():
     imageName = data.get("imageName")
     imgaeAbstract = data.get("imgaeAbstract")
     belong = data.get("structName")
-    imgInfo = ImagePath.query.filter_by(id = data['id']).first()
+    imgInfo = ImagePath.query.filter_by(id=data['id']).first()
     try:
         file = request.files.get('file')
         tempDir = os.path.join(base, 'image')
@@ -74,15 +72,17 @@ def editImg():
     imgInfo.belong = belong
     imgInfo.image_name = imageName
     imgInfo.pid = 0
-    # try:
-    #     db.session.commit()
-    # except Exception as e:
-    #     db.session.rollback()
-    #     return jsonify({'status':'error','data':'','error':'更新失败'})
-    return jsonify({'status':'success','data': imgInfo.to_json(),'msg':'更新成功'})
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'更新失败'})
+    # 将编辑好的信息返回前端 方便页面更新
+    return jsonify({'status': 'success', 'data': changeToItem(imgInfo.to_json()), 'msg': '更新成功'})
 
-@uploadModule.route('/video',methods = ['POST'])
-# @auth.login_required
+
+@uploadModule.route('/video', methods=['POST'])
+@auth.login_required
 def uploadVideo():
     file = request.files.get('file')
     belong = request.form.get("belong")
@@ -105,11 +105,28 @@ def uploadVideo():
         code = 'info.' + toChanged + '=url'
         exec(code)
     except Exception as e:
-        pass
+        return jsonify({'status': 'error', 'data': '', 'error': '上传失败'})
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'status':'error','data':'','error':'上传失败'})
+        return jsonify({'status': 'error', 'data': '', 'error': '上传失败'})
+    return jsonify({'status': '200', 'data': changeToItem(info.to_json()), 'msg': '更新成功'})
+
+
+@uploadModule.route('/file', methods=['POST'])
+@auth.login_required
+def uploadFile():
+    print(request.files)
+    for key in request.files:
+        file = request.files[key]
+        tempDir = os.path.join(base, file.filename)
+        file.save(tempDir)
     return jsonify({'status': '200', 'data': '', 'msg': '更新成功'})
 
+
+# 将imagePath对象转化成包含label 和 path 的字典对象
+def changeToItem(data):
+    item = {"id": data['id'], "pid": data["pid"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl'],
+            "abstract": data['abstract'], "videoUpUrl": data['videoUpUrl'], "videoLeftUrl": data['videoLeftUrl'], "videoRightUrl": data['videoRightUrl'], "videoBottomUrl":data['videoBottomUrl']}
+    return item

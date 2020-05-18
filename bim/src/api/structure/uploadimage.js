@@ -19,3 +19,19 @@ export function edit(data, config) {
     config
   })
 }
+
+export function uploadFiles(data) {
+  return request({
+    url: 'upload/file',
+    method: 'post',
+    data
+  })
+}
+
+export function uploadVideo(data) {
+  return request({
+    url: 'upload/video',
+    method: 'post',
+    data
+  })
+}

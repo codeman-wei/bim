@@ -36,16 +36,19 @@
         </div>
         <div class="img-div">
           <div v-if="trigger">
-            <img  :src="imagePath"  width="100%" style="text-align: center;"> 
-            <div class="content" align="center">
+            <div style="margin: 10px 0" align="center">
               <el-tag type="info">{{imageInfo.imageName}}</el-tag>
-              <div style="text-indent: 2em;margin-top:10px;" v-if="imageInfo.abstract !== ''">
+            </div>
+            <img  :src="imagePath"  width="100%" style="text-align: center;"> 
+            <div class="content">
+              <!-- <el-tag type="info">{{imageInfo.imageName}}</el-tag> -->
+              <span v-if="imageInfo.abstract !== ''">
                 {{imageInfo.abstract}}
                 <!-- 平潭海峡公铁两用大桥啦！世界最长的跨海峡公铁两用大桥一一平潭海峡公铁两用大桥，目前公路部分主体工程已经全部完工，铁路部分最后一座铁路桥正在架梁铺轨。通车后，大桥作为京台高速的咽喉部分，将有力推进海峡两岸基础设施的联通。这里是世界三大风暴海域之一，一年中6级以上大风天超过300天这里无风也起浪水流速度相当于长江中下游洪峰这里小岛棋布、地质复杂坚硬如铁的光板岩石是打桩建墩者的噩梦..... -->
-              </div>
-              <div v-else style="margin-top:3px; font-weight:normal;">
+              </span>
+              <span v-else style="">
                 暂无说明，请添加
-              </div>
+              </span>
             </div>
           </div>
           <div v-else style="">
@@ -70,10 +73,10 @@
                 您的浏览器不支持视频播放
             </video>
             <div style="display: flex;justify-content: space-around; padding: 20px">
-              <el-button :disabled="videoLeftPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-left" @click="getVideoPath('left')"></el-button>
-              <el-button :disabled="videoUpPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-top" @click="getVideoPath('up')"></el-button>
-              <el-button :disabled="videoRightPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-right" @click="getVideoPath('right')"></el-button>
-              <el-button :disabled="videoBottomPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-bottom" @click="getVideoPath('bottom')"></el-button>
+              <el-button :disabled="videoUpPath === null || videoUpPath ===''" class="filter-item" size="mini" type="success" icon="el-icon-caret-top" @click="getVideoPath('up')"/>
+              <el-button :disabled="videoBottomPath === null || videoBottomPath ===''" class="filter-item" size="mini" type="success" icon="el-icon-caret-bottom" @click="getVideoPath('bottom')"/>
+              <el-button :disabled="videoLeftPath === null || videoLeftPath ===''" class="filter-item" size="mini" type="success" icon="el-icon-caret-left" @click="getVideoPath('left')"/>
+              <el-button :disabled="videoRightPath === null || videoRightPath ===''" class="filter-item" size="mini" type="success" icon="el-icon-caret-right" @click="getVideoPath('right')"/>
             </div>
           </div>
           <span v-else>
@@ -133,6 +136,7 @@ export default {
       this.imageName = data.imageName
       this.imageInfo = data
       this.imagePath = this.imageApi + data.path
+      this.videoPath = ''
       this.videoUpPath = data.videoUpUrl
       this.videoLeftPath = data.videoLeftUrl
       this.videoRightPath = data.videoRightUrl
@@ -170,13 +174,19 @@ export default {
       _this.fileName = this.imageInfo.imageName
       _this.dialog = true
     },
-    
     uploadvideo() {
       this.$refs.video.dialog = true
     },
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
+    },
+    refresh(data) {
+      console.log(data)
+      this.$nextTick(() => {
+        this.getDeptDatas()
+        this.handleNodeClick(data)
+      })
     }
   }
 }
@@ -212,9 +222,10 @@ export default {
       width: 100%;
     }
     .content {
-      margin-top: 15px;
-      font-weight: bold;
-      font-size: 15px;
+      margin-top: 10px;
+      text-indent: 2em;
+      font-size: 12px;
+      color: #aaa;
       font-family: Arial, Helvetica, sans-serif;
     }
   }

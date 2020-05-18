@@ -4,34 +4,34 @@
         <div>
           <el-upload
             class="upload-demo"
-            action="http://127.0.0.1:5000/secmanager/test"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
+            action="http://127.0.0.1:5000/upload/file"
             multiple
+            :limit="5"
+            :on-change="onChange"
+            :file-list="fileList"
+            :auto-upload="false"
             :on-exceed="handleExceed">
-            <img style="width: 79%" :src="imageApi + '/bridge_img/1.jpg'" title="点击上传头像" class="avatar">
-            <!-- <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+            <!-- <img style="width: 79%" :src="imageApi + '/bridge_img/1.jpg'" title="点击上传头像" class="avatar"> -->
+            <el-button slot="default" size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
-          <h1>上传视频</h1>
+            <el-button size="small" type="success" @click="submitUpload">上传服务器</el-button>
+          <!-- <h1>上传视频</h1>
           <el-upload
             class="upload-demo"
-            action="http://127.0.0.1:5000/secmanager/test"
+            action=""
             :on-preview="handlePreview"
             list-type="picture-card"
             :on-success="handleAvatarSuccess">
             <i slot="default" class="el-icon-plus"></i>
-            <!-- <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-          </el-upload>
-          <video
+          </el-upload> -->
+          <!-- <video
             src="http://127.0.0.1:5000/static/test.mp4"
             controls="controls"
             style="width: 200px"
             align="center">
               您的浏览器不支持视频播放
-          </video>
+          </video> -->
           <br>
           <br>
 
@@ -40,7 +40,7 @@
             v-model="filterText"
             style="width: 300px;">
           </el-input>
-
+<!-- 
           <el-tree
             class="filter-tree"
             :data="treedata"
@@ -48,7 +48,7 @@
             default-expand-all
             :filter-node-method="filterNode"
             ref="tree">
-          </el-tree>
+          </el-tree> -->
 
 
 
@@ -61,11 +61,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { loadTree } from '@/api/operation/secmanager'
+
+// import { loadTree } from '@/api/operation/secmanager'
+import { uploadFiles } from '@/api/structure/uploadimage'
 export default {
   data() {
     return {
-      fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+      fileList: [],
 
       filterText: '',
       treedata: [],
@@ -108,7 +110,7 @@ export default {
       }
   },
   created() {
-    this.loadTree()
+    // this.loadTree()
   },
   computed: {
     ...mapGetters([
@@ -117,6 +119,48 @@ export default {
     ])
   },
   methods: {
+    onChange(file, fileList) { //这里做一些文件控制，注意：就算一次选取多个文件，这里依旧会执行多次
+    　　let existFile = fileList.slice(0, fileList.length - 1).find(f => f.name === file.name)
+    　　if (existFile) {
+    　　　　this.$message.error('当前文件已经存在!');
+    　　　　fileList.pop()
+    　　}
+    　　this.fileList = fileList
+    },
+    onRemove(file, fileList) {
+    　　this.fileList = fileList
+    },
+    OnExceed(file, fileList) {
+    　　this.$message.error(`最多只能上传5个文夹`);
+    },
+
+    submitUpload() {   //上传函数，如果把提交函数用在http-request钩子中，fileList多长就执行请求多少次接口，依旧是无法做到只请求一次上传多文件
+    　　var formData = new FormData();  //  用FormData存放上传文件
+        if (this.fileList === null || this.fileList.length == 0) {
+          this.$message.warning('请选择要上传的文件！')
+          return
+        }
+    　　this.fileList.forEach(file => { 
+    　　　　　　formData.append(file.raw.name, file.raw); //此处一定是append file.raw 上传文件只需维护fileList file.raw.name要加上 
+    　　}) 
+       uploadFiles(formData).then(res => { //手动上传貌似无法触发成功或失败的钩子函数，因此这里手动调用 
+    　　  this.onSuccess() 
+       }).catch(err => {
+      　　console.log(err)
+      　　this.onError()
+       })
+    },
+    onSuccess() {
+      
+      this.$notify({
+        title: '上传成功',
+        type: 'success',
+        duration: 2500
+      })
+    },
+    onError() {
+
+    },
     loadTree() {
       loadTree().then(res =>{
         console.log(res)

@@ -159,7 +159,6 @@ export default {
           })
           this.$parent.getDeptDatas()
           this.loading = false
-          
         }).catch(err => {
           this.loading = false
         })
@@ -199,7 +198,8 @@ export default {
             type: 'success',
             duration: 2500
           })
-          this.$parent.getDeptDatas()
+          this.$parent.refresh(res.data)
+          // this.$parent.getDeptDatas()
 
           this.loading = false
         }).catch(err => {
