@@ -1,15 +1,21 @@
 <template>
   <div class="participantsinfo">
     <el-row :gutter= "15">
-      <el-col :xs="24" :sm="24" :md="9" :lg="9" :xl="9" >
+      <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" >
           <el-card class="box-card" shadow="never">
               <div slot="header" class="clearfix">
                 <span class="sys-span">施工项目列表</span>
               </div>
-              <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
-                  <el-table-column prop="item_name" label="施工项目" width="160"> </el-table-column>
-                  <el-table-column prop="item_total" label="参建人数" width="80"> </el-table-column>
-                  <el-table-column label="操作" >
+              <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" >
+                  <el-table-column label="施工项目" width="200" :show-overflow-tooltip=true align="left" header-align="center">
+                    <template slot-scope="scope">
+                      <el-tooltip :content="scope.row.item_name" effect="light">
+                      <span>{{scope.row.item_name | ellipsis }}</span>
+                      </el-tooltip>
+                    </template> 
+                  </el-table-column>
+                  <el-table-column prop="item_total" label="参建人数" width="100" align="center" header-align="center"> </el-table-column >
+                  <el-table-column label="操作" width="150" align="center" header-align="center">
                   <template slot-scope="scope">
                       <el-button size="mini" @click="handleLookupDetail(scope.$index, scope.row)">详情</el-button>
                   </template>
@@ -28,7 +34,7 @@
               </div>
           </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="15" :lg="15" :xl="15">
+      <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
         <el-card class="box-card" v-if="selectedProjectID === false">
           <div slot="header" class="clearfix">
             <span class="sys-span">参建人员信息</span>
@@ -51,7 +57,7 @@
               <el-button class="filter-item" size="mini" type="warning" icon="el-icon-refresh" @click="reset">重置</el-button>
 
             </div>
-            <div style="float:left;">
+            <div style="float:right;">
               <!-- 新增 -->
               <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @click="add" >新增</el-button>
               <!-- 导出 -->
@@ -61,23 +67,28 @@
               <!-- 删除 -->
               <el-button class="filter-item" size="mini" type="danger" icon="el-icon-delete"  @click="batchDELETE" :disabled="this.tableData2.length === 0">删除</el-button>
             </div>
-        
+
             <el-table ref="multipleTable2" :data="tableData2" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange2">
-                <el-table-column type="selection" width="55"> </el-table-column>
-                <el-table-column prop="participants_name" label="姓名" width="55"> </el-table-column>
-                <el-table-column label="性别" width="55"> 
+                <el-table-column type="selection" width="55" align="center" header-align="center" > </el-table-column>
+                <el-table-column prop="participants_name" label="姓名" width = "80" align="center" header-align="center"> </el-table-column>
+                <el-table-column prop="participants_number" label="岗位证号" width = "120" align="center" header-align="center"> </el-table-column>
+                <el-table-column prop="participants_tel" label="联系方式" width='120' align="center" header-align="center"> </el-table-column>
+                <el-table-column prop="participants_duty" label="工作职责" width='120' align="left" header-align="center">
                   <template slot-scope="scope">
-                    {{ scope.row.participants_sex === 1 ? '男' : '女' }}
+                    <el-tooltip :content="scope.row.participants_duty" effect="light">
+                      <span>{{scope.row.participants_duty | ellipsis }}</span>
+                    </el-tooltip>
+                  </template> 
+                </el-table-column>
+                <el-table-column prop="participants_dept" label="部门" width='120' align="center" header-align="center"> </el-table-column>
+                <el-table-column prop="participants_position" label="职位" width='120' align="center" header-align="center"> </el-table-column>
+                <el-table-column label="岗位状态" width="100" align="center" header-align="center"> 
+                  <template slot-scope="scope">
+                    <el-tag :type="scope.row.participants_work_status === 1 ? 'success' : 'primary'" disable-transitions>{{ scope.row.participants_work_status === 1 ? '在岗' : '离岗' }}</el-tag>
+                    <!--  -->
                   </template>
                 </el-table-column>
-                <el-table-column prop="participants_tel" label="联系方式" width='120'> </el-table-column>
-                <el-table-column prop="participants_qualification" label="从业资格" width="100"> </el-table-column>
-                <el-table-column label="岗位状态" width="100"> 
-                  <template slot-scope="scope">
-                    {{ scope.row.participants_work_status === 1 ? '在岗' : '离岗' }}
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" align="center" header-align="center">
                   <template slot-scope="scope">
                       <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
                       <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -109,6 +120,15 @@ import {deleteBatchParticipantsinfo} from "@/api/schedule/paticipantsinfo"
 export default {
     components: {
         "participantform": participantform,
+    },
+    filters:{
+      ellipsis(value){
+          if (!value) return '';
+          if (value.length > 12) {
+              return value.slice(0,12) + '...'
+          }
+          return value
+      }
     },
     data(){
       return {
@@ -177,7 +197,7 @@ export default {
         if(this.keyword !== '') {
           params['participants_name'] = this.keyword
         }
-      getParticipantsInfoByPID(params).then(res => {
+        getParticipantsInfoByPID(params).then(res => {
           this.tableData2 = res.data.content
           this.total2 = res.data.totalElements
         })
@@ -192,10 +212,12 @@ export default {
           id: val.id,
           project_id: val.project_id,
           participants_name: val.participants_name,
-          participants_sex: val.participants_sex,
+          participants_number: val.participants_number,
           participants_tel: val.participants_tel,
           participants_work_status: val.participants_work_status,
-          participants_qualification: val.participants_qualification
+          participants_dept: val.participants_dept,
+          participants_position: val.participants_position,
+          participants_duty: val.participants_duty
         }
         _this.dialog = true
       },

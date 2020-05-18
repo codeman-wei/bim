@@ -6,23 +6,26 @@
         <el-form-item label="人员姓名" prop="participants_name">
           <el-input v-model="form.participants_name" style="width: 300px;" />
         </el-form-item>
-        <el-form-item label="人员性别" prop="participants_sex">
-          <el-select v-model="form.participants_sex" placeholder="" style="width: 300px;">
-            <el-option label="男" :value='1'></el-option>
-            <el-option label="女" :value='0'></el-option>
-          </el-select>
+        <el-form-item label="岗位证号" prop="participants_number">
+          <el-input v-model="form.participants_number" style="width: 300px;" />
         </el-form-item>
         <el-form-item label="联系电话" prop="participants_tel">
           <el-input v-model="form.participants_tel" style="width: 300px;" />
         </el-form-item>
-        <el-form-item label="从业资质" prop="participants_qualification">
-          <el-input v-model="form.participants_qualification" style="width: 300px;" />
+        <el-form-item label="所属部门" prop="participants_dept">
+          <el-input v-model="form.participants_dept" style="width: 300px;" />
+        </el-form-item>
+        <el-form-item label="所属职位" prop="participants_position">
+          <el-input v-model="form.participants_position" style="width: 300px;" />
         </el-form-item>
         <el-form-item label="岗位状态" prop="participants_work_status">
           <el-select v-model="form.participants_work_status" placeholder="" style="width: 300px;">
             <el-option label="在岗" :value='1'></el-option>
             <el-option label="离岗" :value='0'></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="工作职责" prop="participants_duty">
+          <el-input v-model="form.participants_duty" style="width: 300px;" type="textarea"/>
         </el-form-item>
 
       </el-form>
@@ -50,26 +53,22 @@ export default {
         id: '',
         project_id: '',
         participants_name: '',
-        participants_sex: '',
+        participants_number: '',
         participants_tel: '',
         participants_work_status: '',
-        participants_qualification: ''
+        participants_dept: '',
+        participants_position: '',
+        participants_duty: ''
       },
       rules: {
         participants_name: [
             { required: true, message: '请输入用户名称', trigger: 'blur' },
         ],
-        participants_sex: [
-            { required: true, message: '请输入用户名称', trigger: 'blur' },
-        ],
-        participants_tel: [
-            { required: true, message: '请输入用户名称', trigger: 'blur' },
-        ],
         participants_work_status: [
             { required: true, message: '请输入用户名称', trigger: 'blur' },
         ],
-        participants_qualification: [
-            { required: true, message: '请输入用户名称', trigger: 'blur' },
+        participants_duty: [
+            { max: 100, message: '长度不得超过100个字', trigger: 'blur' },
         ],       
       },
     }
