@@ -30,9 +30,10 @@
       <!--用户数据-->
       <el-col :span="17" style="padding: 10px">
         <!--工具栏-->
-        <div align="right">
-          <!--搜索框 新增框-->
+        <div align="right" style="margin-bottom: 10px">
+          <!--新增框-->
           <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadimage" :disabled="!trigger">编辑</el-button>
+          <el-button class="filter-item" type="warning" icon="el-icon-video-camera-solid" size="mini" @click="showVideo" :disabled="!trigger">视频</el-button>
         </div>
         <div class="img-div">
           <div v-if="trigger" align="center">
@@ -57,50 +58,23 @@
 
         </div>
       </el-col>
-      <el-col v-if="false" :xs="8" :sm="8" :md="9" :lg="9" :xl="9" style="padding: 10px">
-        <!--工具栏-->
-        <div class="" align="right">
-          <!--搜索框 新增框-->
-          <el-button class="filter-item" type="primary" icon="el-icon-upload" size="mini" @click="uploadvideo" :disabled="!trigger" >导入</el-button>
-        </div>
-        <div class="video-div">
-          <div v-if="trigger" >
-            <video
-              :src="videoPath"
-              controls="controls"
-              style="width: 100%"
-              align="center">
-                您的浏览器不支持视频播放
-            </video>
-            <div style="display: flex;justify-content: space-around; padding: 20px">
-              <el-button :disabled="videoUpPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-top" @click="getVideoPath('up')"/>
-              <el-button :disabled="videoBottomPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-bottom" @click="getVideoPath('bottom')"/>
-              <el-button :disabled="videoLeftPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-left" @click="getVideoPath('left')"/>
-              <el-button :disabled="videoRightPath === null" class="filter-item" size="mini" type="success" icon="el-icon-caret-right" @click="getVideoPath('right')"/>
-            </div>
-          </div>
-          <span v-else>
-            点击左边选项
-          </span>
-        </div>
-      </el-col>
     </el-row>
     <uploadImage ref="image" :isAdd="isAdd" :belong="belong"/>
-    <uploadVideo ref="video" :id="selectId" :belong="belong" />
+    <videoDialog ref="videoDialog" :data="imageInfo" :belong="belong" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import uploadImage from '@/views/structure/uploadImage'
-import uploadVideo from '@/views/structure/uploadVideo'
+import videoDialog from '@/views/structure/components/videoDialog'
 import { getTree } from '@/api/structure/imagePath';
 
 export default {
   name: 'Health',
   components: {
     "uploadImage": uploadImage,
-    "uploadVideo": uploadVideo,
+    "videoDialog": videoDialog
   },
   created() {
     this.$nextTick(() => {
@@ -110,7 +84,6 @@ export default {
   data() {
     return {
       belong: "健康监测系统预留件", selectId: 0,
-      videoUpPath: '', videoPath: '',videoLeftPath: '', videoRightPath: '', videoBottomPath: '',
       deptName: '', imagePath: '', imageName: '', trigger: false, isAdd:true,
       structureData:  [ ],
       defaultProps: { children: 'children', label: 'label' },
@@ -122,6 +95,11 @@ export default {
       'baseApi',
       'imageApi'
     ])
+  },
+  provide () {
+    return {
+      refresh: this.refresh
+    }
   },
   methods: {
     getDeptDatas() {
@@ -136,23 +114,6 @@ export default {
       this.imageName = data.imageName
       this.imageInfo = data
       this.imagePath = this.imageApi + data.path
-      this.videoPath = ''
-      this.videoUpPath = data.videoUpUrl
-      this.videoLeftPath = data.videoLeftUrl
-      this.videoRightPath = data.videoRightUrl
-      this.videoBottomPath = data.videoBottomUrl
-    },
-    getVideoPath(pos) {
-      switch (pos) {
-        case 'left': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoLeftPath
-          break;
-        case 'up': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoUpPath
-          break;
-        case 'right': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoRightPath
-          break;
-        case 'bottom': this.videoPath = 'http://127.0.0.1:5000/static/video' + this.videoBottomPath
-          break;
-      }
     },
     add(){
       this.isAdd = true
@@ -174,19 +135,16 @@ export default {
       _this.fileName = this.imageInfo.imageName
       _this.dialog = true
     },
-    uploadvideo() {
-      this.$refs.video.dialog = true
+    showVideo() {
+      this.$refs.videoDialog.dialog = true
     },
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
     refresh(data) {
-      console.log(data)
-      this.$nextTick(() => {
-        this.getDeptDatas()
-        this.handleNodeClick(data)
-      })
+      this.getDeptDatas()
+      this.handleNodeClick(data)
     }
   }
 }
@@ -209,7 +167,6 @@ export default {
     .img-div {
       padding: 7px;
       width: 100%;
-      margin-top: 20px;
       border: 1px solid #eee
     }
 

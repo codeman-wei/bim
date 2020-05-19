@@ -44,6 +44,7 @@ export default {
       required: true
     }
   },
+  inject: ['refresh'],
   data() {
     return {
       dialog: false, fileList: [], file: null,
@@ -95,7 +96,7 @@ export default {
       })
       this.dialog = false
       this.$nextTick(() => {
-        this.$parent.refresh(data)
+        this.refresh(data)
       })
     },
     handleExceed() {
