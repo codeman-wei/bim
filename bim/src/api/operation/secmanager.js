@@ -41,6 +41,13 @@ export function delAll(data) {
 
 export default { add, edit, del, delAll }
 
+export function getProjectList() {
+    return request({
+      url: '/project/list',
+      method: 'get'
+    })
+}
+
 export function loadTree() {
   return request(
     {

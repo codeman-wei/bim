@@ -1,11 +1,13 @@
 from flask_web.Databases.Project import Project, SubProject, ParticipantsInfo
 from flask import Blueprint,render_template, request, jsonify
-from flask_web import auth, db
+from flask_web import auth, db, app
 import json
-
+import os, random, string
+from datetime import datetime
+GMT_FORMAT = '%a %b %d %Y %H:%M:%S GMT'
 # 在flask中，有一个专门用来存储用户信息的g对象，g的全称的为global
 projectModule = Blueprint('projectModule',__name__)
-
+base = app.config["BASE_DIR"]
 
 @projectModule.route('/',methods = ['GET'])
 @auth.login_required
@@ -30,25 +32,164 @@ def getAllProject():
     return_data['totalElements'] = totalElements  
     return jsonify({'code':'200','data':return_data,'error':''})
 
+
+
+@projectModule.route('/addProject',methods = ['POST'])
+@auth.login_required
+def addProject():
+    data = request.form
+    item_name = data.get("item_name")
+    item_status = data.get("item_status")
+    file = request.files['file']
+    tempDir = os.path.join(base, 'image')
+    tempDir = os.path.join(tempDir, "projectImg")
+    if not os.path.exists(tempDir):
+        os.mkdir(tempDir)
+    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 24))
+    imgName = ran_str + os.path.splitext(file.filename)[-1]
+    save_path = os.path.join(tempDir, imgName)
+    file.save(save_path)
+    imageUrl = '/projectImg/' + imgName
+    p = Project(item_name = item_name, item_status = item_status, item_img_href = imageUrl)
+    try:
+        db.session.add(p)
+        db.session.commit()  # flask默认使用事务，所以每一次操作都要提交事务
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status': 'error', 'data': '', 'error': '添加失败'})
+    return jsonify({'status': 'success', 'data': '', 'msg': '添加成功'})
+
+@projectModule.route('/editProject',methods = ['PUT'])
+@auth.login_required
+def editProject():
+    data = request.form
+    id = data.get("id")
+    item_name = data.get("item_name")
+    item_status = data.get("item_status")
+    pinfo = Project.query.filter_by(id = data['id']).first()
+    try:
+        file = request.files['file']
+        tempDir = os.path.join(base, 'image')
+        tempDir = os.path.join(tempDir, "projectImg")
+        if not os.path.exists(tempDir):
+            os.mkdir(tempDir)
+        ran_str = ''.join(random.sample(string.ascii_letters + string.digits, 24))
+        imgName = ran_str + os.path.splitext(file.filename)[-1]
+        save_path = os.path.join(tempDir, imgName)
+        file.save(save_path)
+        imageUrl = '/projectImg/' + imgName
+        pinfo.item_img_href = imageUrl
+    except Exception as e:
+        pass
+    pinfo.item_name = item_name
+    pinfo.item_status = int(item_status)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'更新失败'})
+    # 将编辑好的信息返回前端 方便页面更新
+    return jsonify({'status': 'success', 'data':'', 'msg': '更新成功'})
+
+
+@projectModule.route('/getProjectScheduleInfo', methods = ['GET'])
+@auth.login_required
+def getProjectScheduleInfo():
+    page = int(request.args.get("page"))
+    size = int(request.args.get("size"))
+    totalElements = Project.query.count()
+    projects = Project.query.offset((page - 1) * size).limit(size).all()
+    return_data = {}
+    data = []
+    for p in projects:
+        data.append(p.to_json())
+    return_data['content'] = data
+    return_data['totalElements'] = totalElements  
+    return jsonify({'status':'success','data':return_data,'msg':'请求数据成功'})
+
+
+
 @projectModule.route('/subproject',methods = ['GET'])
 @auth.login_required
 def getSubprojectById():
     print(request.args)
-    pid = int(request.args.get("id"))
-    subp = SubProject.query.filter_by(project_id = pid).all()
-    return_data = []
-    for sp in subp:
-        return_data.append(sp.to_json())
+    pid = int(request.args.get("projectid"))
+    sub_project_name = request.args.get("sub_project_name")
+    page = int(request.args.get("page"))
+    size = int(request.args.get("size"))
+    subs = []
+    # 默认按照开始时间排序
+    if sub_project_name is not None:
+        totalElements = SubProject.query.filter_by(project_id = pid).filter(SubProject.sub_project_name.like("%" + sub_project_name + "%")).count()
+        subs = SubProject.query.filter_by(project_id = pid).filter(SubProject.sub_project_name.like("%" + sub_project_name + "%")).order_by(SubProject.start_time).offset((page - 1) * size).limit(size).all()
+    else:
+        totalElements = SubProject.query.filter_by(project_id = pid).count()
+        subs = SubProject.query.filter_by(project_id = pid).order_by(SubProject.start_time).offset((page - 1) * size).limit(size).all()
+    data = []
+    return_data = {}
+    for sp in subs:
+        data.append(sp.to_json())
+    return_data['totalElements'] = totalElements
+    return_data['content'] = data
     return jsonify({'code':'200','data':return_data,'error':''})
 
+@projectModule.route('/addsubproject', methods = ['POST'])
+@auth.login_required
+def addsubproject():
+    data = json.loads(str(request.data, encoding = "utf-8"))
+    sup = SubProject(
+            project_id = data['project_id'],
+            sub_project_name = data['sub_project_name'],
+            start_time = data['start_time'],
+            end_time = data['end_time'],
+            sub_project_status = data['sub_project_status'],
+        )
+    try:
+        db.session.add(sup)
+        db.session.commit()    # flask默认使用事务，所以每一次操作都要提交事务
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'添加失败'})
+    return jsonify({'status':'success','data':'','msg':'添加成功'})
+
+
+@projectModule.route('/editsubproject', methods = ['PUT'])
+@auth.login_required
+def editsubproject():
+    data = json.loads(str(request.data, encoding = "utf-8"))
+    print(data)
+    sub = SubProject.query.filter_by(id = data['id']).first()
+    sub.project_id = data['project_id'],
+    sub.sub_project_name = data['sub_project_name'],
+    sub.start_time = datetime.strptime(data['start_time'], GMT_FORMAT),
+    sub.end_time = datetime.strptime(data['end_time'], GMT_FORMAT),
+    sub.sub_project_status = data['sub_project_status'],
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'更新失败'})
+    return jsonify({'status':'success','data':'','msg':'更新成功'})
+
+
+
+
+
+
+
+
 @projectModule.route('/list',methods = ['GET'])
-# @auth.login_required
+@auth.login_required
 def getProjectList():
     items = Project.query.all()
     data = []
     for item in items:
         data.append(item.to_json())
     return jsonify({'code':'200','data':data,'error':''})
+
+
+
 
 @projectModule.route('/participantsinfo', methods = ['GET'])
 @auth.login_required

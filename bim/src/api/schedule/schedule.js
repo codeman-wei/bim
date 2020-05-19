@@ -8,3 +8,21 @@ export function showAllProject(params){
       params
     })
 }
+
+export function addProject(data, config){
+  return request({
+    url:'/project/addProject',
+    method: 'post',
+    data,
+    config
+  })
+}
+
+export function editProject(data, config){
+  return request({
+    url:'/project/editProject',
+    method: 'put',
+    data,
+    config
+  })
+}

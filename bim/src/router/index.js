@@ -8,11 +8,11 @@ import secm from '@/views/operation/secm/secmanager'
 import userinfo from '@/views/userinformation/userinfo'
 import employee from '@/views/operation/emp/employee'
 import sysmonitor from '@/views/operation/sysmonitor/systemmonitor'
-import notFound from '@/views/404'
-import schedulemanager from '@/views/schedule/manager/manager'
+import itemManager from '@/views/schedule/itemManager/manager'
+import schedulemanager from '@/views/schedule/scheduleManager/scheduleInfo'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
 import Test from '@/views/test'
-import bridgesynthesisinfo from '@/views/structure/bridgesynthesis/bridgesynthesisInfo'
+import bridgesynthesisinfo from '@/views/structure/branch/bridgesynthesisInfo'
 import sub2 from '@/views/structure/sub2'
 import health from '@/views/structure/health'
 
@@ -39,6 +39,11 @@ export default new Router({
         {
           path: '/4-1',
           name: '4-1',
+          component: itemManager
+        },
+        {
+          path: '/4-2',
+          name: '4-2',
           component: schedulemanager
         },
         {

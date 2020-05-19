@@ -114,7 +114,7 @@
 </template>
 <script>
 import crudMethod from '@/api/operation/secmanager'
-import { getProjectList } from '@/api/schedule/subproject'
+import { getProjectList } from '@/api/operation/secmanager'
 import crud from '@/mixins/crud'
 export default {
   name: "Secmanager",

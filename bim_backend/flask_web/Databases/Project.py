@@ -6,16 +6,17 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     item_name = db.Column(db.String(255), nullable=True)
     item_img_href = db.Column(db.String(255), nullable=True)
-
-    def __init__(self, item_name, item_img_href):
+    item_status = db.Column(db.Integer, nullable = True)
+    def __init__(self, item_name, item_img_href, item_status):
         self.item_name = item_name
         self.item_img_href = item_img_href
-
+        self.item_status = item_status
     def to_json(self):
         json_data = {
             'id' : self.id,
             'item_name': self.item_name,
             'item_img_href': self.item_img_href,
+            'item_status': self.item_status
         }
         return json_data
 
@@ -27,7 +28,7 @@ class SubProject(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     project_id = db.Column(db.Integer, nullable=True)
     sub_project_name = db.Column(db.String(255), nullable=True)
-    sub_project_status = db.Column(db.String(255), nullable=True)
+    sub_project_status = db.Column(db.Integer, nullable = True)
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
 

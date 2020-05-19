@@ -144,7 +144,7 @@ export default {
             'Authorization': `Basic ${new Buffer(token).toString('base64')}`
           }
         }
-        let fileFormData = new FormData(`Basic ${new Buffer(token).toString('base64')}`);
+        let fileFormData = new FormData();
         fileFormData.append('imageName', this.form.name)
         fileFormData.append('imgaeAbstract', this.form.abstract)
         fileFormData.append('structName', this.belong)
