@@ -24,7 +24,7 @@ app.config['DEFAULT_PASSWORD'] = '123456'
 app.config['Expiration'] = 600
 # 指定数据库的链接信息
 # mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost/bim_db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@210.34.58.5/bim_db"
 # 这个配置将来会被禁用,设置为True或者False可以解除警告信息,建议设置False
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # app.config['SQLALCHEMY_RECORD_QUERIES'] = True

@@ -31,6 +31,7 @@
 </template>
 <script>
 import { addsubProject, editsubProject } from "@/api/schedule/scheduleInfo"
+import { parseTime } from '@/utils/index'
 export default {
   props: {
     isAdd: {
@@ -64,11 +65,14 @@ export default {
     }
   },
   methods: {
+      parseTime,
       cancel() {
           this.dialog = false
       },
       doSubmit() {
         this.form['project_id'] = this.$parent.projectid
+        this.form['start_time'] = this.parseTime(this.form['start_time'])
+        this.form['end_time'] = this.parseTime(this.form['end_time'])
         this.$refs['form'].validate((valid) => {
           if (valid) {
             this.loading = true
@@ -100,7 +104,6 @@ export default {
     },
     doEdit() {
       editsubProject(this.form).then(res => {
-        
         this.$notify({
           title: '修改成功',
           type: 'success',

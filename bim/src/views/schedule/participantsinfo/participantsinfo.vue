@@ -189,8 +189,8 @@ export default {
       initdata2() {
         const sort = 'id,desc'
         let params = {
-          page: this.page,
-          size: this.size,
+          page: this.page2,
+          size: this.size2,
           projectid: this.projectid,
           sort: sort
         }
@@ -270,20 +270,20 @@ export default {
       },
       reset(){
         this.keyword =""
-        this.initdata2()
+        this.search()
       },
       search() {
-        this.page = 1,
+        this.page2 = 1,
         this.initdata2()
       },
 
       handleSizeChange2(val) {
-        this.page = 1
-        this.size = val
+        this.page2 = 1
+        this.size2 = val
         this.initdata2()
       },
       handleCurrentChange2(val) {
-        this.page = val
+        this.page2 = val
         this.initdata2()
       },
     }

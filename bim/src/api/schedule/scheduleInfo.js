@@ -30,5 +30,19 @@ export function editsubProject(params){
     url:'/project/editsubproject',
     method: 'put',
     data:params
-})
+  })
+}
+export function del(id) {
+  return request({
+    url: '/project/delsubproject/' +  id,
+    method: 'DELETE'
+  })
+}
+
+export function batchdel(data) {
+  return request({
+    url: '/project/delbatchproject',
+    method: 'post',
+    data
+  })
 }
