@@ -16,7 +16,7 @@
                 </el-table-column>
               <el-table-column label="项目状态" width="100" align="center" header-align="center"> 
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.item_status === 1 ? 'success' : 'primary'" disable-transitions>{{ scope.row.item_status === 1 ? '已完成' : '未完成' }}</el-tag>
+                  <el-tag :type="scope.row.item_status === 1 ? 'success' : 'danger'" disable-transitions>{{ scope.row.item_status === 1 ? '已完成' : '未完成' }}</el-tag>
                 </template>
               </el-table-column>
 
@@ -67,7 +67,7 @@
               <!-- 新增 -->
               <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @click="handleAdd" >新增</el-button>
               <!-- 删除 -->
-              <el-button class="filter-item" size="mini" type="danger" icon="el-icon-delete"  @click="batchDELETE" :disabled="this.tableData2.length === 0">删除</el-button>
+              <el-button class="filter-item" size="mini" type="danger" icon="el-icon-delete"  @click="handleBatchdel" :disabled="this.tableData2.length === 0">删除</el-button>
             </div>
 
             <el-table ref="multipleTable" :data="tableData2" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
@@ -81,10 +81,11 @@
               <el-table-column prop="end_time" label="完成时间" >
                   <template :show-overflow-tooltip="true" slot-scope="scope">
                       <span>{{ parseTime(scope.row.end_time) }}</span>
-                  </template>  </el-table-column>
+                  </template>  
+              </el-table-column>
               <el-table-column prop="sub_project_status" label="当前状态" > 
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.sub_project_status === 1 ? 'success' : 'warning'" disable-transitions>{{ scope.row.sub_project_status === 1 ? '已完成' : '未完成' }}</el-tag>
+                  <el-tag :type="scope.row.sub_project_status === 1 ? 'success' : 'danger'" disable-transitions>{{ scope.row.sub_project_status === 1 ? '已完成' : '未完成' }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="操作">
@@ -99,7 +100,7 @@
                   @size-change="handleSizeChange2"
                   @current-change="handleCurrentChange2"
                   :current-page="page2"
-                  :page-sizes="[10, 20, 30, 40]"
+                  :page-sizes="[3, 10, 20, 30, 40]"
                   :page-size="size2"
                   layout="total, sizes, prev, pager, next, jumper"
                   :total="total2">
@@ -113,11 +114,8 @@
   </div>
 </template>
 <script>
-import { getProjectScheduleInfo, getsubProjectById } from "@/api/schedule/scheduleInfo"
+import { getProjectScheduleInfo, getsubProjectById, del, batchdel} from "@/api/schedule/scheduleInfo"
 import scheduleForm from '@/views/schedule/scheduleManager/scheduleForm'
-// import { deleteParticipantsinfo } from "@/api/schedule/paticipantsinfo"
-// import participantform from '@/views/schedule/participantsinfo/participantsform'
-// import {deleteBatchParticipantsinfo} from "@/api/schedule/paticipantsinfo"
 import { parseTime } from '@/utils/index'
 export default {
     components: {
@@ -193,8 +191,8 @@ export default {
       initdata2() {
         const sort = 'id,desc'
         let params = {
-          page: this.page,
-          size: this.size,
+          page: this.page2,
+          size: this.size2,
           projectid: this.projectid,
           sort: sort
         }
@@ -208,10 +206,10 @@ export default {
       },
       reset(){
         this.keyword =""
-        this.initdata2()
+        this.search()
       },
       search() {
-        this.page = 1,
+        this.page2 = 1,
         this.initdata2()
       },
 
@@ -226,35 +224,32 @@ export default {
       },
 
 
-
-
-      batchDELETE() {
-        // this.$confirm('您确定要批量删除吗?', '提示', {
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   type: 'warning'
-        //   }).then(() => {
-        //       var ids = this.multipleSelection.map(item => item.id).join()//获取所有选中行的id组成的字符串，以逗号分隔
-        //       let param = {
-        //           "ids": ids
-        //       }
-        //       deleteBatchParticipantsinfo(param).then(res=> {
-        //           this.$message({
-        //               type: 'success',
-        //               message: '删除成功!',
-        //               duration: 2500
-        //           });
-        //           this.initdata()
-        //           this.initdata2()
-        //       }).catch(()=>{
-        //           console.log("fdf")
-        //       })
-        //   }).catch(() => {
-        //       this.$message({
-        //           type: 'info',
-        //           message: '已取消删除'
-        //       });          
-        //   });
+      handleBatchdel() {
+        this.$confirm('您确定要批量删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+          }).then(() => {
+            var ids = this.multipleSelection.map(item => item.id).join()//获取所有选中行的id组成的字符串，以逗号分隔
+            let param = {
+                "ids": ids
+            }
+            batchdel(param).then(res=> {
+              this.$message({
+                  type: 'success',
+                  message: '删除成功!',
+                  duration: 2500
+              });
+              this.initdata2()
+            }).catch(()=>{
+                console.log("fdf")
+            })
+        }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '已取消删除'
+            });          
+        });
       },
 
 
@@ -272,28 +267,26 @@ export default {
         }
         _this.dialog = true
       },
+
       handleDelete(index, val){
-        // deleteParticipantsinfo(val.id).then( res => {
-        //   this.$notify({
-        //       title: '删除成功',
-        //       type: 'success',
-        //       duration: 2500
-        //   })
-        //   this.initdata()
-        //   this.initdata2()
-        // }).catch(err => {
-        //     console.log("fdf")
-        // })
+        del(val.id).then( res => {
+          this.$notify({
+              title: '删除成功',
+              type: 'success',
+              duration: 2500
+          })
+          this.initdata2()
+        }).catch(err => {
+            console.log("fdf")
+        })
       },
-
-
       handleSizeChange2(val) {
-        this.page = 1
-        this.size = val
+        this.page2 = 1
+        this.size2 = val
         this.initdata2()
       },
       handleCurrentChange2(val) {
-        this.page = val
+        this.page2 = val
         this.initdata2()
       },
     }

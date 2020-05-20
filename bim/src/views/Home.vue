@@ -25,12 +25,12 @@
                     </template>
                     <el-menu-item-group>
                         <el-menu-item index="2-1">整体模型</el-menu-item> 
-                        <el-menu-item index="sub2">通航孔桥附属设施</el-menu-item>
+                        <el-menu-item index="2-2">通航孔桥附属设施</el-menu-item>
                         <el-menu-item index="2-3">非通航孔桥结构附属设施</el-menu-item>
                         <el-menu-item index="2-4">全桥风屏障及声屏障</el-menu-item>
                         <el-menu-item index="2-5">桥梁综合接地设施</el-menu-item>
                         <el-menu-item index="2-6">桥梁供电、照明设施</el-menu-item>
-                        <el-menu-item index="health">健康监测系统预留件</el-menu-item>
+                        <el-menu-item index="2-7">健康监测系统预留件</el-menu-item>
                         <el-menu-item index="2-8">修改记录</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>

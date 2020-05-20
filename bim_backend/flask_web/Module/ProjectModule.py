@@ -4,7 +4,7 @@ from flask_web import auth, db, app
 import json
 import os, random, string
 from datetime import datetime
-GMT_FORMAT = '%a %b %d %Y %H:%M:%S GMT'
+
 # 在flask中，有一个专门用来存储用户信息的g对象，g的全称的为global
 projectModule = Blueprint('projectModule',__name__)
 base = app.config["BASE_DIR"]
@@ -159,12 +159,11 @@ def editsubproject():
     data = json.loads(str(request.data, encoding = "utf-8"))
     print(data)
     sub = SubProject.query.filter_by(id = data['id']).first()
-    sub.project_id = data['project_id'],
-    sub.sub_project_name = data['sub_project_name'],
-    sub.start_time = datetime.strptime(data['start_time'], GMT_FORMAT),
-    sub.end_time = datetime.strptime(data['end_time'], GMT_FORMAT),
-    sub.sub_project_status = data['sub_project_status'],
-
+    sub.project_id = data['project_id']
+    sub.sub_project_name = data['sub_project_name']
+    sub.start_time = data['start_time']
+    sub.end_time = data['end_time']
+    sub.sub_project_status = data['sub_project_status']
     try:
         db.session.commit()
     except Exception as e:
@@ -173,7 +172,32 @@ def editsubproject():
     return jsonify({'status':'success','data':'','msg':'更新成功'})
 
 
+@projectModule.route('/delsubproject/<int:id>', methods = ['DELETE'])
+@auth.login_required
+def delsubproject(id):
+    sub = SubProject.query.filter_by(id = id).first()
+    try:
+        db.session.delete(sub)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'status':'error','data':'','error':'删除失败'})
+    return jsonify({'status':'success','data':'','msg':'删除成功'})
 
+@projectModule.route('/delbatchproject', methods = ['POST'])
+@auth.login_required
+def delbatchproject():
+    data = json.loads(str(request.data, encoding = "utf-8"))
+    ids = data['ids'].split(",")
+    for i in ids:
+        sub = SubProject.query.filter_by(id = i).first()
+        try:
+            db.session.delete(sub)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'status':'error','data':'','error':'删除失败'})
+    return jsonify({'status':'success','data':'','msg':'删除成功'})
 
 
 

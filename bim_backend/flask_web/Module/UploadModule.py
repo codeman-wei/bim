@@ -3,8 +3,8 @@ from flask_web import auth, app
 import json
 from flask_web import db
 import os, random, string
-from flask_web.Databases.ImagePath import ImagePath, StructorInfo
-
+from flask_web.Databases.ImagePath import ImagePath, StructorInfo, UpdataLog
+from datetime import datetime  
 base = app.config["BASE_DIR"]
 uploadModule = Blueprint('uploadModule', __name__)
 
@@ -42,6 +42,19 @@ def uploadImg():
     except Exception as e:
         db.session.rollback()
         return jsonify({'status': 'error', 'data': '', 'error': '添加失败'})
+    # 添加 updatalog表
+
+    log = UpdataLog(
+        loginname = g.user.loginname, 
+        belong = belong, 
+        reason = "上传" + imageName + "图片", 
+        updatetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        op = 1)
+    try :
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
     return jsonify({'status': 'success', 'data': '', 'msg': '添加成功'})
 
 
@@ -78,6 +91,17 @@ def editImg():
         db.session.rollback()
         return jsonify({'status':'error','data':'','error':'更新失败'})
     # 将编辑好的信息返回前端 方便页面更新
+    log = UpdataLog(
+        loginname = g.user.loginname, 
+        belong = belong, 
+        reason = "更新" + imageName + "图片", 
+        updatetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        op = 0)   
+    try :
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
     return jsonify({'status': 'success', 'data': changeToItem(imgInfo.to_json()), 'msg': '更新成功'})
 
 
@@ -130,3 +154,27 @@ def changeToItem(data):
     item = {"id": data['id'], "pid": data["pid"], "label": data['imageName'], "imageName": data['imageName'], "path": data['imageUrl'],
             "abstract": data['abstract'], "videoUpUrl": data['videoUpUrl'], "videoLeftUrl": data['videoLeftUrl'], "videoRightUrl": data['videoRightUrl'], "videoBottomUrl":data['videoBottomUrl']}
     return item
+
+
+
+
+@uploadModule.route('/updatelist', methods=['GET'])
+@auth.login_required
+def getupdatelist():
+    page = int(request.args.get("page"))
+    size = int(request.args.get("size"))
+    keyword = request.args.get("keyword")
+    if keyword is not None:
+        totalElements = UpdataLog.query.filter(UpdataLog.reason.like("%" + keyword + "%")).count()
+        logs = UpdataLog.query.filter(UpdataLog.reason.like("%" + keyword + "%")).all()
+    else:
+        totalElements = UpdataLog.query.count()
+        logs = UpdataLog.query.offset((page - 1) * size).limit(size).all()
+    return_data = {}
+    data = []
+    for log in logs:
+        data.append(log.to_json())
+    return_data['content'] = data
+    return_data['totalElements'] = totalElements  
+    return jsonify({'code':'200','data':return_data,'error':''})
+
