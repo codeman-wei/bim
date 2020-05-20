@@ -13,8 +13,6 @@ import schedulemanager from '@/views/schedule/scheduleManager/scheduleInfo'
 import participantsinfo from '@/views/schedule/participantsinfo/participantsinfo'
 import Test from '@/views/test'
 import bridgesynthesisinfo from '@/views/structure/branch/bridgesynthesisInfo'
-import sub2 from '@/views/structure/sub2'
-import health from '@/views/structure/health'
 import health from '@/views/structure/branch/health'
 
 
